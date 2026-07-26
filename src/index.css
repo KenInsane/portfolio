@@ -1,0 +1,1534 @@
+/* ==========================================================================
+   Design system — kinetic dark.
+
+   Soft radii, floating glass, one electric accent that glows. Motion is
+   scroll-driven and native (animation-timeline), so there is no scroll library
+   and nothing to keep in sync with React.
+   ========================================================================== */
+
+:root {
+  /* A neutral grey ramp — no hue anywhere, but lifted off flat #000, which
+     reads cheap next to glass and crushes the shadows in the frames. */
+  --bg: #0a0a0a;
+  /* Same value as --bg, in channels, for the scrims that need it with alpha.
+     Hardcoding it is how the old blue-black survived a palette change. */
+  --bg-rgb: 10, 10, 10;
+  --bg-2: #0e0e0e;
+  --surface: #141414;
+  --surface-2: #1c1c1c;
+
+  --line: rgba(255, 255, 255, 0.07);
+  --line-hi: rgba(255, 255, 255, 0.16);
+
+  --txt: #f4f4f4;
+  --dim: #a3a3a3;
+  --mute: #7a7a7a;
+
+  /* The interface carries no colour of its own — light is the only accent, so
+     the work in the frames is the only thing on screen that is coloured. */
+  --accent: #ffffff;
+  --accent-dim: #c9ced6;
+  --glow: rgba(255, 255, 255, 0.16);
+
+  /* Glass: a light film plus a blur. Both are needed — blur alone looks muddy. */
+  --glass-bg: rgba(255, 255, 255, 0.055);
+  --glass-line: rgba(255, 255, 255, 0.11);
+  /* No saturate(): it would boost the colour of the artwork showing through
+     the glass, which is the one thing the interface should not touch. */
+  --blur: blur(20px);
+
+  --font-jp: 'Yu Gothic', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Noto Sans JP',
+    'Meiryo', 'MS PGothic', sans-serif;
+  --font-display: 'Archivo Variable', 'Archivo', var(--font-jp);
+  --font-body: 'Inter Variable', 'Inter', var(--font-jp);
+
+  --gutter: clamp(1.15rem, 4vw, 4rem);
+  --max: 1600px;
+
+  --r-sm: 12px;
+  --r: 20px;
+  --r-lg: 28px;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --nav-h: 64px;
+
+  --grain-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+}
+
+/* --------------------------------------------------------------- reset -- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scrollbar-color: var(--line-hi) transparent;
+}
+
+body {
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--txt);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  font-synthesis-weight: none;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul,
+ol {
+  list-style: none;
+  padding: 0;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+::selection {
+  background: var(--txt);
+  color: var(--bg);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ------------------------------------------------------------- helpers -- */
+
+.shell {
+  width: 100%;
+  max-width: var(--max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.label {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+
+/* Small pill used for eyebrows — glass, not a flat chip. */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-line);
+  backdrop-filter: var(--blur);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+  pointer-events: none;
+  opacity: 0.1;
+  mix-blend-mode: overlay;
+  background-image: var(--grain-url);
+  background-size: 180px 180px;
+}
+
+/* Reveal is a progressive enhancement — see Reveal.jsx for why it must never
+   be the only thing standing between the user and the content. */
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 0.9s var(--ease),
+    transform 0.9s var(--ease);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* -------------------------------------------------------------- cursor -- */
+/* PARKED: <Cursor /> is not rendered (see App.jsx), so none of this is active —
+   the native pointer is in use. Kept so the effect can be switched back on. */
+
+.cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 200;
+  pointer-events: none;
+  border-radius: 50%;
+  mix-blend-mode: difference;
+  translate: -50% -50%;
+  will-change: transform;
+}
+
+.cursor__dot {
+  width: 6px;
+  height: 6px;
+  background: #fff;
+}
+
+.cursor__ring {
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  transition:
+    width 0.35s var(--ease),
+    height 0.35s var(--ease),
+    background 0.35s var(--ease),
+    border-color 0.35s var(--ease);
+}
+
+.cursor__ring.is-hot {
+  width: 76px;
+  height: 76px;
+  background: rgba(255, 255, 255, 0.1);
+  border-color: transparent;
+}
+
+/* The custom cursor only makes sense with a real pointer. */
+@media (hover: none), (pointer: coarse) {
+  .cursor {
+    display: none;
+  }
+}
+
+/* The native cursor is hidden only once <Cursor> has actually started, so a
+   JS failure leaves the user with a working pointer rather than none at all. */
+@media (hover: hover) and (pointer: fine) {
+  html[data-cursor='on'],
+  html[data-cursor='on'] * {
+    cursor: none;
+  }
+}
+
+/* ---------------------------------------------------------------- link -- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.95rem 1.6rem;
+  border-radius: 999px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-line);
+  backdrop-filter: var(--blur);
+  font-size: 0.9rem;
+  color: var(--txt);
+  position: relative;
+  overflow: hidden;
+  transition:
+    border-color 0.4s var(--ease),
+    transform 0.4s var(--ease);
+}
+
+.btn > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Light bleeds up from the bottom instead of a flat colour swap. */
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 140% at 50% 130%, rgba(255, 255, 255, 0.2) 0%, transparent 62%);
+  opacity: 0;
+  transition: opacity 0.45s var(--ease);
+}
+
+.btn:hover {
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+.btn:hover::before {
+  opacity: 1;
+}
+
+/* The one filled control on the page: light on dark, inverted. */
+.btn--solid {
+  background: var(--accent);
+  border-color: transparent;
+  color: var(--bg);
+  box-shadow: 0 8px 40px -8px var(--glow);
+}
+
+/* Inverted, so the hover wash has to darken rather than lighten. */
+.btn--solid::before {
+  background: radial-gradient(120% 140% at 50% 130%, rgba(0, 0, 0, 0.16) 0%, transparent 60%);
+  opacity: 0;
+}
+
+.btn--solid:hover {
+  box-shadow: 0 14px 50px -8px var(--glow);
+}
+
+.btn__icon {
+  width: 9px;
+  height: 11px;
+  flex: none;
+  fill: currentColor;
+}
+
+/* ------------------------------------------------------------------ nav -- */
+/* A floating pill, not a bar welded to the top edge. */
+
+.nav {
+  position: fixed;
+  top: clamp(0.75rem, 2vw, 1.25rem);
+  left: 50%;
+  translate: -50% 0;
+  z-index: 40;
+  width: min(calc(100% - 2 * var(--gutter)), var(--max));
+  height: var(--nav-h);
+  display: flex;
+  align-items: center;
+  padding-inline: clamp(1rem, 2vw, 1.5rem);
+  border-radius: 999px;
+  border: 1px solid transparent;
+  transition:
+    background 0.5s var(--ease),
+    border-color 0.5s var(--ease),
+    backdrop-filter 0.5s var(--ease);
+}
+
+.nav.is-stuck {
+  background: rgba(var(--bg-rgb), 0.6);
+  border-color: var(--glass-line);
+  backdrop-filter: var(--blur);
+}
+
+.nav__inner {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.nav__brand {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.nav__links {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  /* Without min-width:0 a flex child refuses to shrink below its content and
+     silently overflows the pill — which is exactly what a fourth link did. */
+  min-width: 0;
+}
+
+/* Narrow screens: tighten first, then let the row scroll rather than clip.
+   Tuning padding to fit today's four labels would just break on the fifth. */
+@media (max-width: 680px) {
+  .nav__inner {
+    gap: 0.6rem;
+  }
+
+  .nav__brand {
+    font-size: 0.95rem;
+  }
+
+  .nav__links {
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    gap: 0.1rem;
+    /* Fades the last chip out at the edge so it reads as "more to the right"
+       rather than as a link that has been cut in half. */
+    mask-image: linear-gradient(to right, #000 88%, transparent 100%);
+  }
+
+  .nav__links::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav__link {
+    padding: 0.4rem 0.5rem;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+}
+
+.nav__link {
+  padding: 0.5rem 0.95rem;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  color: var(--dim);
+  transition:
+    color 0.3s var(--ease),
+    background 0.3s var(--ease);
+}
+
+.nav__link:hover {
+  color: var(--txt);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.nav__link.is-active {
+  color: var(--txt);
+  background: rgba(255, 255, 255, 0.09);
+}
+
+/* ----------------------------------------------------------------- hero -- */
+
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding-block: calc(var(--nav-h) + 4rem) clamp(2.5rem, 6vw, 4.5rem);
+  overflow: hidden;
+}
+
+.hero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.hero__bg > * {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Fine display mesh over the footage — an LCD pixel grid rather than CRT
+   scanlines, so the two axes carry equal weight.
+   The pitch is deliberately not 2px: a 1px line on a 2px pitch is half the
+   surface, which greys the image out and moirés hard against moving footage.
+   Painted before the scrim, so it fades out with the frame instead of sitting
+   flat over the whole hero. */
+.hero__grid {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  --mesh-pitch: 3px;
+  --mesh-line: rgba(0, 0, 0, 0.42);
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      var(--mesh-line) 0 1px,
+      transparent 1px var(--mesh-pitch)
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      var(--mesh-line) 0 1px,
+      transparent 1px var(--mesh-pitch)
+    );
+  opacity: 0.85;
+}
+
+/* On hi-dpi the same CSS pitch renders crisper, so the mesh can be finer and
+   lighter without turning into mush. */
+@media (min-resolution: 2dppx) {
+  .hero__grid {
+    --mesh-pitch: 2.5px;
+    --mesh-line: rgba(0, 0, 0, 0.34);
+  }
+}
+
+.hero__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(
+      to top,
+      var(--bg) 2%,
+      rgba(var(--bg-rgb), 0.55) 45%,
+      rgba(var(--bg-rgb), 0.3) 100%
+    ),
+    radial-gradient(100% 80% at 50% 50%, transparent 30%, rgba(var(--bg-rgb), 0.85) 100%);
+}
+
+/* Light rather than colour — a neutral bloom bleeding off the bottom edge.
+   Kept well below the old tinted value: white haze goes milky far sooner. */
+.hero__glow {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  bottom: -38vmin;
+  translate: -50% 0;
+  width: 110vmin;
+  height: 70vmin;
+  background: radial-gradient(50% 50% at 50% 50%, var(--glow) 0%, transparent 70%);
+  filter: blur(40px);
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.hero__inner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: var(--max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.hero__name {
+  font-size: clamp(3.25rem, 13.5vw, 12rem);
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  line-height: 0.86;
+  margin-block: 1.5rem 1.75rem;
+  /* Slight vertical falloff stops a solid slab of white at huge sizes. */
+  background: linear-gradient(175deg, #fff 30%, #b4b4b4 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1.5rem;
+  color: var(--dim);
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+
+/* Breaks land on the separators only — never inside "Scene Assembly and
+   Lookdev", which is what a plain joined string does on a narrow screen. */
+.hero__disciplines {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.2rem 0.7rem;
+}
+
+.hero__discipline {
+  white-space: nowrap;
+}
+
+.hero__discipline:not(:last-child)::after {
+  content: '/';
+  margin-left: 0.7rem;
+  color: var(--mute);
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+
+.hero__cue {
+  position: absolute;
+  z-index: 2;
+  right: var(--gutter);
+  bottom: clamp(2.5rem, 6vw, 4.5rem);
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .hero__cue {
+    display: block;
+  }
+}
+
+/* -------------------------------------------------------------- marquee -- */
+
+.marquee {
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  padding-block: clamp(1.25rem, 2.5vw, 2rem);
+  border-block: 1px solid var(--line);
+  background: var(--bg-2);
+  user-select: none;
+  mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+}
+
+.marquee__track {
+  display: flex;
+  flex: none;
+  gap: clamp(1.5rem, 3vw, 3rem);
+  padding-right: clamp(1.5rem, 3vw, 3rem);
+  animation: marquee 38s linear infinite;
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+.marquee__item {
+  display: flex;
+  align-items: center;
+  gap: clamp(1.5rem, 3vw, 3rem);
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 2.4vw, 2rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--dim);
+  white-space: nowrap;
+}
+
+/* Structural separator, so it stays — just muted rather than a bright bead. */
+.marquee__item::after {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--mute);
+  flex: none;
+}
+
+/* ------------------------------------------------------------ section -- */
+
+.section {
+  padding-block: clamp(4.5rem, 11vw, 9rem);
+}
+
+.section__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem 3rem;
+  margin-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+
+.section__title {
+  font-size: clamp(2.5rem, 7vw, 6rem);
+  font-weight: 700;
+  margin-top: 1.25rem;
+}
+
+.section__note {
+  max-width: 42ch;
+  color: var(--dim);
+  font-size: 0.975rem;
+}
+
+/* --------------------------------------------------------- sticky stack -- */
+/* Each project pins under the nav and the next one slides over it. The cards
+   shrink slightly as they get buried, which is what sells the depth. */
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2rem, 5vw, 4rem);
+}
+
+.stack__item {
+  position: sticky;
+  /* Staggered so the buried cards leave a sliver visible behind the top one. */
+  top: calc(var(--nav-h) + 1.5rem + var(--i) * 14px);
+}
+
+.card {
+  display: block;
+  position: relative;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: 0 30px 80px -40px rgba(0, 0, 0, 0.9);
+  transition: border-color 0.5s var(--ease);
+}
+
+.card:hover {
+  border-color: var(--line-hi);
+}
+
+.card__frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+
+@media (max-width: 700px) {
+  .card__frame {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+.card__frame > * {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.3s var(--ease);
+}
+
+.card:hover .card__frame > * {
+  transform: scale(1.05);
+}
+
+/* Content sits on the image, floated on a scrim rather than in a separate bar. */
+.card__overlay {
+  position: absolute;
+  inset: auto 0 0 0;
+  z-index: 2;
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+  background: linear-gradient(to top, rgba(var(--bg-rgb), 0.92) 10%, transparent 100%);
+}
+
+.card__title {
+  font-size: clamp(1.6rem, 4vw, 3.25rem);
+  font-weight: 600;
+}
+
+.card__sub {
+  color: var(--dim);
+  font-size: 0.95rem;
+  margin-top: 0.5rem;
+}
+
+.card__side {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: none;
+}
+
+.card__year {
+  color: var(--mute);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The affordance that says "this opens" without a button. */
+.card__go {
+  width: 46px;
+  height: 46px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-line);
+  backdrop-filter: var(--blur);
+  transition:
+    background 0.4s var(--ease),
+    border-color 0.4s var(--ease),
+    transform 0.4s var(--ease);
+}
+
+.card:hover .card__go {
+  background: var(--accent);
+  border-color: transparent;
+  /* The arrow inherits currentColor, so it has to flip with the fill. */
+  color: var(--bg);
+  transform: translate(3px, -3px);
+  box-shadow: 0 8px 30px -6px var(--glow);
+}
+
+.card__go svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+}
+
+.card__badge {
+  position: absolute;
+  z-index: 2;
+  top: clamp(1rem, 2vw, 1.5rem);
+  left: clamp(1rem, 2vw, 1.5rem);
+}
+
+/* ---------------------------------------------------------- experiments -- */
+/* A sketchbook grid rather than the work stack: dense packing, mixed cell
+   widths, no case-study structure. */
+
+/* Only the header needs stacking context for the ambient light; the project
+   pages share .shell and must not be affected. */
+.exp-page .shell {
+  position: relative;
+}
+
+.exp__ambient {
+  position: absolute;
+  z-index: 0;
+  left: 50%;
+  top: 0;
+  translate: -50% -35%;
+  width: min(150%, 1700px);
+  height: 85vmin;
+  background: radial-gradient(50% 50% at 50% 50%, var(--glow) 0%, transparent 70%);
+  filter: blur(60px);
+  /* At 0.4 this was invisible against the page — a neutral bloom needs more
+     presence than a tinted one to register at all. */
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Masonry by columns rather than a grid.
+   Grid was the wrong tool: it imposes one cell shape per track, and these clips
+   run from 1.0 to 2.45, so every mismatch showed up as uneven black margin and
+   ragged rows. In a column flow each frame is simply its own shape and the next
+   one starts right underneath — nothing to align, nothing left over. */
+.exp {
+  position: relative;
+  columns: 2;
+  column-gap: clamp(1.25rem, 3vw, 2.5rem);
+  margin-top: clamp(3rem, 7vw, 5rem);
+}
+
+@media (max-width: 760px) {
+  .exp {
+    columns: 1;
+  }
+}
+
+.exp__cell {
+  /* Without this a frame can be sliced across the column boundary. */
+  break-inside: avoid;
+  margin-bottom: clamp(1.25rem, 3vw, 2.5rem);
+}
+
+.exp__item {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  aspect-ratio: var(--exp-aspect, 16 / 9);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--bg-2);
+  cursor: zoom-in;
+  /* No hairline border on purpose: a frame turns each clip into a card in a
+     catalogue. A soft drop shadow instead reads as a print lying on the page,
+     which is the warmer, less clinical feel this page is after. */
+  box-shadow: 0 24px 60px -32px rgba(0, 0, 0, 0.95);
+  transition:
+    transform 0.55s var(--ease),
+    box-shadow 0.55s var(--ease);
+}
+
+/* Lifts toward the reader rather than zooming the footage — calmer, and it
+   does not fight the clip that is already moving inside. */
+.exp__item:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 38px 80px -30px rgba(0, 0, 0, 1);
+}
+
+/* Contained, not cropped: these clips run from 1.01 to 2.45, and cropping a
+   square fracture test into a wide cell throws most of the effect away. Nearly
+   all of them sit on black, so the letterboxing is invisible in practice. */
+.exp__item > :first-child {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.exp__note {
+  margin-top: 0.7rem;
+  max-width: 46ch;
+  font-size: 0.9rem;
+  color: var(--dim);
+}
+
+/* --------------------------------------------------------- project page -- */
+
+.proj {
+  padding-top: calc(var(--nav-h) + clamp(3rem, 8vw, 6rem));
+  /* Overridden per project from the data, so 2.35 film frames are not cropped
+     to 16:9. --stills-min controls how many frames sit in a row.
+     --stills-aspect lets breakdown material keep a different box from the film
+     itself, and --media-fit switches it to letterboxing when that material has
+     mixed ratios and cropping would cut content away. */
+  --media-aspect: 16 / 9;
+  --stills-aspect: var(--media-aspect);
+  --media-fit: cover;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 1.1rem 0.55rem 0.9rem;
+  border-radius: 999px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-line);
+  font-size: 0.85rem;
+  color: var(--dim);
+  margin-bottom: clamp(2rem, 5vw, 3.5rem);
+  transition:
+    color 0.3s var(--ease),
+    border-color 0.3s var(--ease);
+}
+
+.back:hover {
+  color: var(--txt);
+  border-color: var(--line-hi);
+}
+
+.back svg {
+  width: 14px;
+  height: 10px;
+  fill: currentColor;
+  transition: transform 0.35s var(--ease);
+}
+
+.back:hover svg {
+  transform: translateX(-4px);
+}
+
+.proj__title {
+  font-size: clamp(2.75rem, 9vw, 7rem);
+  font-weight: 700;
+}
+
+.proj__sub {
+  max-width: 58ch;
+  color: var(--dim);
+  font-size: clamp(1.05rem, 1.7vw, 1.3rem);
+  line-height: 1.55;
+  margin-top: 1.5rem;
+}
+
+.proj__hero {
+  margin-block: clamp(2.5rem, 6vw, 4.5rem);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  aspect-ratio: var(--media-aspect);
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+
+.proj__hero > * {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* No mobile ratio override here on purpose: forcing 4/3 would crop a 2.35
+   frame to pieces. A short, wide hero is the honest shape for film work. */
+
+.proj__cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(2rem, 5vw, 4rem);
+}
+
+@media (min-width: 900px) {
+  .proj__cols {
+    grid-template-columns: 260px minmax(0, 1fr);
+  }
+}
+
+/* The meta rail is a glass panel that rides along with the copy. */
+.meta {
+  display: grid;
+  gap: 1.5rem;
+  align-content: start;
+  padding: clamp(1.25rem, 2vw, 1.75rem);
+  border-radius: var(--r);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-line);
+  backdrop-filter: var(--blur);
+}
+
+@media (min-width: 900px) {
+  .meta {
+    position: sticky;
+    top: calc(var(--nav-h) + 2.5rem);
+  }
+}
+
+.meta__row {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.meta__row + .meta__row {
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+}
+
+.meta__val {
+  font-size: 0.95rem;
+  color: var(--txt);
+  line-height: 1.5;
+}
+
+.meta__val--list {
+  color: var(--dim);
+}
+
+.prose p {
+  max-width: 66ch;
+  color: var(--dim);
+  font-size: clamp(1.0125rem, 1.4vw, 1.1rem);
+  line-height: 1.8;
+}
+
+.prose p + p {
+  margin-top: 1.35rem;
+}
+
+/* --------------------------------------------------------------- stills -- */
+
+.stills {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--stills-min, 340px)), 1fr));
+  gap: clamp(0.75rem, 1.5vw, 1.25rem);
+}
+
+.still {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: var(--stills-aspect);
+  border-radius: var(--r);
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  cursor: zoom-in;
+  transition: border-color 0.4s var(--ease);
+}
+
+.still > * {
+  width: 100%;
+  height: 100%;
+  object-fit: var(--media-fit);
+  transition: transform 1s var(--ease);
+}
+
+.still:hover {
+  border-color: var(--line-hi);
+}
+
+.still:hover > * {
+  transform: scale(1.06);
+}
+
+/* --------------------------------------------------------------- plates -- */
+/* Full-width animated frames, presented the way a gallery does: one per row,
+   nothing competing beside them. */
+
+.plates {
+  display: grid;
+  gap: clamp(1rem, 2.5vw, 2rem);
+}
+
+.plate {
+  display: block;
+  width: 100%;
+  padding: 0;
+  position: relative;
+  aspect-ratio: var(--media-aspect);
+  border-radius: var(--r);
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  cursor: zoom-in;
+  transition: border-color 0.4s var(--ease);
+}
+
+.plate > * {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.plate:hover {
+  border-color: var(--line-hi);
+}
+
+/* ---------------------------------------------------------------- meta -- */
+
+.meta__links {
+  display: grid;
+  gap: 0.5rem;
+}
+
+/* Without colour to mark it, a link needs the underline to read as one. */
+.meta__links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  color: var(--txt);
+  text-decoration: underline;
+  text-decoration-color: var(--line-hi);
+  text-underline-offset: 4px;
+  transition:
+    opacity 0.3s var(--ease),
+    text-decoration-color 0.3s var(--ease);
+}
+
+.meta__links a:hover {
+  text-decoration-color: var(--txt);
+}
+
+.meta__links a::after {
+  content: '↗';
+  font-size: 0.85em;
+}
+
+.meta__links a:hover {
+  opacity: 0.72;
+}
+
+/* ----------------------------------------------------------- breakdown -- */
+
+.bd {
+  display: grid;
+  gap: clamp(3rem, 7vw, 5.5rem);
+}
+
+.bd__item {
+  display: grid;
+  gap: clamp(1.25rem, 3vw, 2.75rem);
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  .bd__item {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  }
+
+  .bd__item:nth-child(even) .bd__media {
+    order: 2;
+  }
+
+  /* Very wide process boards get the full column with the text underneath.
+     Beside a text column a 3.5:1 board is a ~145px strip, and the alternating
+     sides made neighbouring boards different widths on top of that. */
+  .bd--stacked .bd__item {
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(1rem, 2vw, 1.75rem);
+  }
+
+  .bd--stacked .bd__item:nth-child(even) .bd__media {
+    order: 0;
+  }
+}
+
+.bd__media {
+  position: relative;
+  /* Falls back to the stills ratio; set --bd-aspect when the process material
+     is a different shape from the frames themselves. */
+  aspect-ratio: var(--bd-aspect, var(--stills-aspect));
+  border-radius: var(--r);
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+
+.bd__media > * {
+  width: 100%;
+  height: 100%;
+  object-fit: var(--media-fit);
+}
+
+/* Openable boards are buttons, so they need the affordance and the reset. */
+.bd__media--open {
+  display: block;
+  padding: 0;
+  width: 100%;
+  cursor: zoom-in;
+  transition: border-color 0.4s var(--ease);
+}
+
+.bd__media--open:hover {
+  border-color: var(--line-hi);
+}
+
+/* Layout only — the pill styling comes from .tag, which must keep its flex. */
+.bd__step {
+  margin-bottom: 1rem;
+}
+
+.bd__title {
+  font-size: clamp(1.5rem, 2.8vw, 2.15rem);
+  margin-bottom: 1rem;
+}
+
+.bd__body {
+  color: var(--dim);
+  max-width: 50ch;
+  line-height: 1.8;
+}
+
+/* -------------------------------------------------------------- lightbox -- */
+
+.lb {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(var(--bg-rgb), 0.92);
+  backdrop-filter: blur(16px);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  animation: fade 0.35s var(--ease);
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.lb__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem var(--gutter);
+}
+
+.lb__close {
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--glass-line);
+  background: var(--glass-bg);
+  font-size: 0.85rem;
+  color: var(--dim);
+  transition:
+    color 0.3s var(--ease),
+    border-color 0.3s var(--ease);
+}
+
+.lb__close:hover {
+  color: var(--txt);
+  border-color: var(--line-hi);
+}
+
+.lb__stage {
+  display: grid;
+  place-items: center;
+  padding-inline: clamp(0.75rem, 5vw, 4rem);
+  min-height: 0;
+}
+
+.lb__stage img,
+.lb__stage video {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: var(--r);
+}
+
+.lb__ph {
+  width: min(100%, 1280px);
+  aspect-ratio: 16 / 9;
+  max-height: 100%;
+  border-radius: var(--r);
+  overflow: hidden;
+}
+
+.lb__nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1.25rem var(--gutter) 2.25rem;
+}
+
+.lb__btn {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-line);
+  color: var(--dim);
+  transition:
+    background 0.3s var(--ease),
+    color 0.3s var(--ease);
+}
+
+.lb__btn:hover:not(:disabled) {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+.lb__btn svg {
+  width: 18px;
+  height: 12px;
+  fill: currentColor;
+}
+
+/* ---------------------------------------------------------------- next -- */
+
+/* Sits outside .shell, so it carries its own gutter to stay off the edges. */
+.next {
+  display: block;
+  width: calc(100% - 2 * var(--gutter));
+  max-width: var(--max);
+  margin: clamp(4rem, 9vw, 7rem) auto 0;
+  padding: clamp(2.5rem, 6vw, 4.5rem) clamp(1.5rem, 3vw, 3rem);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.5s var(--ease);
+}
+
+.next::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -60%;
+  translate: -50% 0;
+  width: 80%;
+  height: 100%;
+  background: radial-gradient(50% 50% at 50% 50%, var(--glow) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.6s var(--ease);
+  filter: blur(30px);
+}
+
+.next:hover {
+  border-color: var(--line-hi);
+}
+
+.next:hover::before {
+  opacity: 1;
+}
+
+.next__inner {
+  position: relative;
+  z-index: 1;
+  max-width: var(--max);
+  margin-inline: auto;
+}
+
+.next__title {
+  font-size: clamp(2rem, 6vw, 4.5rem);
+  margin-top: 1rem;
+  transition: transform 0.6s var(--ease);
+}
+
+.next:hover .next__title {
+  transform: translateX(14px);
+}
+
+/* -------------------------------------------------------------- footer -- */
+
+.footer {
+  position: relative;
+  margin-top: clamp(3rem, 8vw, 6rem);
+  padding-block: clamp(4rem, 9vw, 7rem) 2.5rem;
+  border-top: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.footer__glow {
+  position: absolute;
+  left: 50%;
+  top: -30%;
+  translate: -50% 0;
+  width: 90vmin;
+  height: 60vmin;
+  background: radial-gradient(50% 50% at 50% 50%, var(--glow) 0%, transparent 70%);
+  filter: blur(50px);
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.footer__note {
+  position: relative;
+  max-width: 46ch;
+  margin-top: 1.75rem;
+  color: var(--dim);
+  font-size: clamp(1rem, 1.5vw, 1.15rem);
+  line-height: 1.6;
+}
+
+/* With the email gone these are the only way to reach anyone, so they are set
+   as a ruled list of statements rather than a row of small chips. */
+.footer__links {
+  position: relative;
+  display: grid;
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+  border-top: 1px solid var(--line);
+}
+
+.footer__links li {
+  border-bottom: 1px solid var(--line);
+}
+
+.footer__link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding-block: clamp(0.85rem, 2vw, 1.35rem);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.5rem, 4.5vw, 2.75rem);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: var(--txt);
+  transition: padding-inline-start 0.45s var(--ease);
+}
+
+/* The row steps aside on hover — the only motion needed to say "clickable". */
+.footer__link:hover {
+  padding-inline-start: clamp(0.5rem, 1.5vw, 1rem);
+}
+
+.footer__link::after {
+  content: '↗';
+  flex: none;
+  font-size: 0.5em;
+  color: var(--mute);
+  transition:
+    transform 0.45s var(--ease),
+    color 0.35s var(--ease);
+}
+
+.footer__link:hover::after {
+  color: var(--txt);
+  transform: translate(4px, -4px);
+}
+
+.footer__base {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: clamp(3rem, 6vw, 4.5rem);
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+}
+
+/* ------------------------------------------------------------- 404 page -- */
+
+.nf {
+  min-height: 100svh;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  text-align: center;
+  gap: 1.5rem;
+  padding: var(--gutter);
+}
+
+.nf__code {
+  font-size: clamp(4rem, 18vw, 12rem);
+  color: var(--accent);
+  line-height: 1;
+  text-shadow: 0 0 80px var(--glow);
+}
+
+/* ---------------------------------------------------------------- print -- */
+
+@media print {
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .grain,
+  .nav,
+  .cursor {
+    display: none;
+  }
+}
+
+/* --------------------------------------------------- reduced motion -- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Stacking depends on scrolling; flatten it rather than pin cards. */
+  .stack__item {
+    position: static;
+  }
+
+  .marquee__track {
+    animation: none;
+  }
+}

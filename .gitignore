@@ -1,0 +1,19 @@
+node_modules/
+dist/
+.vite/
+
+# Built site media IS committed — a CI runner cannot reach the originals on X:,
+# so anything the deployed site needs has to live in the repo.
+# What stays out is the raw material and scratch output:
+tools/_dl/
+tools/_shots/
+media_staged/
+
+# Local agent/editor config — holds absolute paths from this machine.
+.claude/
+
+.DS_Store
+Thumbs.db
+*.local
+.env
+.env.*
