@@ -13,7 +13,9 @@ import aspects from './experiments.aspects.json'
  * 1.0 to 2.45, and forcing them into two fixed cell shapes was what left the
  * uneven black margins.
  */
-const anim = (slug) => ({ kind: 'image', src: `media/experiments/anim/${slug}.webp` })
+// Animations are H.264 too, not animated WebP: about half the bytes, and a
+// <video> can be paused off-screen where an animated <img> never stops.
+const anim = (slug) => ({ kind: 'video', src: `media/experiments/anim/${slug}.mp4` })
 // Extension is explicit because one source is a QuickTime .mov, and renaming it
 // to .mp4 would only get it served with the wrong content type.
 const clip =

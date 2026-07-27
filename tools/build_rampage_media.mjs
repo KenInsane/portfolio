@@ -16,6 +16,27 @@
 import { resolve, dirname, join, parse } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { converters, listNumeric, ensure, report, existsSync } from './lib/media.mjs'
+import { transcodeAdaptive, hasFfmpeg } from './lib/video.mjs'
+
+if (!hasFfmpeg()) {
+  console.error('ffmpeg not found — see tools/lib/video.mjs')
+  process.exit(1)
+}
+
+// H.264 instead of animated WebP — roughly half the bytes at a comparable look,
+// and a <video> stops decoding once it leaves the viewport.
+const SHOT_MP4 = { width: 1280, crf: 26, audio: false }
+const BD_MP4 = { width: 1000, crf: 28, audio: false }
+
+function toMp4(src, dest, opts, label) {
+  if (existsSync(dest) && !force) return console.log(`skip  ${label}`)
+  try {
+    const r = transcodeAdaptive(src, dest, opts)
+    console.log(`h264  ${label}  ${r.label}${r.crf ? ` [crf ${r.crf}]` : ''}`)
+  } catch (err) {
+    console.warn(`! ${label}: ${err.message}`)
+  }
+}
 
 const SRC = 'X:\\DOTA-2-SHORTFILM_2025'
 const BD = join(SRC, 'BREAKDOWN')
@@ -67,7 +88,8 @@ for (const f of ['01.gif', '02.gif', '03.gif', '04.gif', '05.gif']) {
     console.warn(`! missing ${src}`)
     continue
   }
-  await c.animWebp(src, join(OUT, 'shots', `${parse(f).name}.webp`), PLATE)
+  const base = parse(f).name
+  toMp4(src, join(OUT, 'shots', `${base}.mp4`), SHOT_MP4, `shots/${base}.mp4`)
 }
 
 // ---- breakdown frames --------------------------------------------------- //
@@ -87,7 +109,9 @@ for (const [file, slug, tighter] of BREAKDOWN) {
     console.warn(`! missing ${src}`)
     continue
   }
-  await c.animWebp(src, join(OUT, 'bd', `${slug}.webp`), { ...ANIM, ...tighter })
+  // `tighter` was tuned for WebP quality numbers; H.264 has its own ladder and
+  // the adaptive pass already backs off when a clip refuses to compress.
+  toMp4(src, join(OUT, 'bd', `${slug}.mp4`), BD_MP4, `bd/${slug}.mp4`)
 }
 
 report(c.tally, OUT)

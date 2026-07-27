@@ -68,11 +68,11 @@ export default function Experiments() {
                 onClick={() => setIndex(i)}
                 aria-label={`Open ${e.title}`}
               >
-                {/* Videos play on hover rather than autoplaying: there are
-                    eight of them and nothing lazy-loads a <video>, so
-                    autoplaying would pull tens of megabytes on page load.
-                    Tapping opens the lightbox, which plays with controls — so
-                    touch users lose nothing. */}
+                {/* Everything here plays by itself, but only while it is on
+                    screen — see the observer in Media.jsx. Hover-to-play was
+                    the old workaround for <video> not lazy-loading; with
+                    `preload="none"` a clip costs nothing until it scrolls in,
+                    so the page can just be alive. */}
                 <Media
                   kind={e.media?.kind ?? 'image'}
                   src={e.media?.src}
@@ -80,7 +80,6 @@ export default function Experiments() {
                   seed={e.id}
                   label={e.title}
                   alt={e.title}
-                  hoverPlay={e.media?.kind === 'video'}
                   motion={e.media?.kind === 'video'}
                 />
                 {/* No caption on the frame by request — the work is left to

@@ -34,9 +34,23 @@ if (!hasFfmpeg()) {
   process.exit(1)
 }
 
-// These are grid previews, not hero plates: 1440 is already twice the width
-// they render at, and they play muted, so the audio track is dead weight.
-const VIDEO_ENCODE = { width: 1440, crf: 24, audio: false }
+// Grid previews, not hero plates. 1000 is still above the ~617 CSS px they
+// render at, they play muted so the audio track is dead weight, and every clip
+// on this page now uses the same target — there is no reason for a clip that
+// started life as an MP4 to be heavier than one that started as a GIF.
+const VIDEO_ENCODE = { width: 1000, crf: 28, audio: false }
+
+/**
+ * Animated sources ship as H.264, not animated WebP.
+ *
+ * Measured on four of the heaviest clips: the WebP builds totalled 10.1 MB and
+ * the same content at 1000px/CRF 28 came to 4.7 MB — 54% less at a comparable
+ * look. (A first attempt at CRF 24 came out *larger* than the WebP; the codec
+ * only wins once the quality targets actually match.) The second, bigger win is
+ * behavioural: a <video> can be paused off-screen, while an animated WebP in an
+ * <img> decodes forever whether or not anyone is looking at it.
+ */
+const ANIM_ENCODE = { width: 1000, crf: 28, audio: false }
 
 const DESK = join(process.env.USERPROFILE ?? '', 'Desktop')
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -106,21 +120,28 @@ ensure(join(OUT, 'video'))
 // or the whole grid reflows as things arrive.
 const aspects = {}
 
-console.log(`${GIFS.length} gifs -> animated webp`)
-for (const [file, slug, opts] of GIFS) {
+console.log(`${GIFS.length} gifs -> h264`)
+for (const [file, slug] of GIFS) {
   const src = join(DESK, file)
   if (!existsSync(src)) {
     console.warn(`! missing ${file}`)
     continue
   }
-  const dest = join(OUT, 'anim', `${slug}.webp`)
-  await c.animWebp(src, dest, opts ?? ANIM)
-  try {
-    const m = await sharp(dest).metadata()
-    aspects[slug] = +(m.width / m.height).toFixed(3)
-  } catch (err) {
-    console.warn(`! no aspect for ${slug}: ${err.message}`)
+  const dest = join(OUT, 'anim', `${slug}.mp4`)
+  if (existsSync(dest) && !force) {
+    console.log(`skip  anim/${slug}.mp4`)
+  } else {
+    try {
+      const r = transcodeAdaptive(src, dest, ANIM_ENCODE)
+      console.log(`h264  anim/${slug}.mp4  ${r.label}${r.crf ? ` [crf ${r.crf}]` : ''}`)
+    } catch (err) {
+      console.warn(`! ${slug}: ${err.message}`)
+      continue
+    }
   }
+  const d = mp4Dimensions(dest)
+  if (d) aspects[slug] = +(d.width / d.height).toFixed(3)
+  else console.warn(`! no aspect for ${slug}`)
 }
 
 console.log(`\n${VIDEOS.length} videos -> copied as-is`)
@@ -169,7 +190,7 @@ for (const entry of VIDEOS) {
 // keep shipping in dist/ — megabytes for clips that are no longer on the page.
 // Everything here is regenerated from the Desktop, so removal is cheap.
 const expected = {
-  anim: new Set(GIFS.map(([, slug]) => `${slug}.webp`)),
+  anim: new Set(GIFS.map(([, slug]) => `${slug}.mp4`)),
   video: new Set(VIDEOS.map(videoName)),
 }
 let pruned = 0

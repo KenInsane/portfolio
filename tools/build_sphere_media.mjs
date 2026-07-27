@@ -10,6 +10,29 @@
 import { resolve, dirname, join, parse } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { converters, list, listNumeric, ensure, report, existsSync } from './lib/media.mjs'
+import { transcodeAdaptive, hasFfmpeg } from './lib/video.mjs'
+
+if (!hasFfmpeg()) {
+  console.error('ffmpeg not found — see tools/lib/video.mjs')
+  process.exit(1)
+}
+
+// Animated modules ship as H.264 rather than animated WebP: about half the
+// bytes at a comparable look, and a <video> can be paused when it scrolls out
+// of view where an animated <img> decodes forever. Plates run full width, so
+// they get more pixels than the breakdown clips beside a text column.
+const PLATE_MP4 = { width: 1280, crf: 26, audio: false }
+const BD_MP4 = { width: 1000, crf: 28, audio: false }
+
+function toMp4(src, dest, opts, label) {
+  if (existsSync(dest) && !force) return console.log(`skip  ${label}`)
+  try {
+    const r = transcodeAdaptive(src, dest, opts)
+    console.log(`h264  ${label}  ${r.label}${r.crf ? ` [crf ${r.crf}]` : ''}`)
+  } catch (err) {
+    console.warn(`! ${label}: ${err.message}`)
+  }
+}
 
 const SRC = 'X:\\DOTA-2_SHORTFLIM_BEHANCE'
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -46,19 +69,21 @@ for (const f of stills) {
 
 // ---- gallery animations ------------------------------------------------- //
 const gifs = list(join(SRC, 'GIFS'), /\.gif$/i)
-console.log(`\n${gifs.length} gallery gifs`)
+console.log(`\n${gifs.length} gallery gifs -> h264`)
 for (const f of gifs) {
   const base = parse(f).name
-  await c.animWebp(join(SRC, 'GIFS', f), join(OUT, 'anim', `${base}.webp`), ANIM)
+  toMp4(join(SRC, 'GIFS', f), join(OUT, 'anim', `${base}.mp4`), PLATE_MP4, `anim/${base}.mp4`)
   // Mid-animation rather than frame one, which is often a fade from black.
+  // Doubles as the video's poster, so the frame is up before the file lands.
   await c.frame(join(SRC, 'GIFS', f), join(OUT, 'anim', `${base}.jpg`), { ...THUMB, at: 0.5 })
 }
 
 // ---- breakdown animations ---------------------------------------------- //
 const bd = list(join(SRC, 'BREAKDOWN_GIFS'), /\.gif$/i)
-console.log(`\n${bd.length} breakdown gifs`)
+console.log(`\n${bd.length} breakdown gifs -> h264`)
 for (const f of bd) {
-  await c.animWebp(join(SRC, 'BREAKDOWN_GIFS', f), join(OUT, 'bd', `${parse(f).name}.webp`), ANIM)
+  const base = parse(f).name
+  toMp4(join(SRC, 'BREAKDOWN_GIFS', f), join(OUT, 'bd', `${base}.mp4`), BD_MP4, `bd/${base}.mp4`)
 }
 
 report(c.tally, OUT)

@@ -39,11 +39,12 @@ export const profile = {
     // title card, which would fight the hero heading. The dark hero reads as
     // intentional until the clip starts.
     poster: undefined,
-    loop: 'videos/reel-2025.mp4',
+    // Two files on purpose. The hero plays a short silent excerpt — the landing
+    // page has no business downloading 21 MB to put motion behind a headline —
+    // while the full reel is fetched only when someone presses Play reel.
+    // The excerpt is already trimmed past the title card, so no loopStart here.
+    loop: 'videos/reel-loop.mp4',
     full: 'videos/reel-2025.mp4',
     real: true,
-    // The reel opens on a title card. As a background it would put a second
-    // large piece of type behind the name, so the hero starts past it.
-    loopStart: 6,
   },
 }

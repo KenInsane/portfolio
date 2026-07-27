@@ -63,8 +63,13 @@ export default function Project() {
   } = project
   const next = getNextProject(slug)
 
+  // Derived from the file rather than declared per entry — the two drifted apart
+  // once the animated plates moved from WebP to MP4, and the markup kept
+  // rendering <img> at files that were now video.
+  const kindOf = (src) => (/\.(mp4|webm|mov)$/i.test(src || '') ? 'video' : 'image')
+
   const toItem = (m, i, prefix) => ({
-    kind: 'image',
+    kind: kindOf(m.src),
     src: m.src,
     label: m.caption || `${title} — ${prefix} ${i + 1}`,
     seed: `${slug}-${prefix}-${i}`,
@@ -214,12 +219,13 @@ export default function Project() {
                     aria-label={`Open ${item.label}`}
                   >
                     <Media
-                      kind="image"
+                      kind={item.kind}
                       src={item.src}
                       real={real}
                       seed={item.seed}
                       label={item.label}
                       alt={item.label}
+                      motion={item.kind === 'video'}
                     />
                   </button>
                 </Reveal>

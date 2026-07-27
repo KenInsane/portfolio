@@ -62,11 +62,11 @@ export const projects = [
       loop: '',
     },
     plates: [
-      { src: 'media/work/divine-rampage/shots/01.webp', caption: 'Shot 01' },
-      { src: 'media/work/divine-rampage/shots/02.webp', caption: 'Shot 02' },
-      { src: 'media/work/divine-rampage/shots/03.webp', caption: 'Shot 03' },
-      { src: 'media/work/divine-rampage/shots/04.webp', caption: 'Shot 04' },
-      { src: 'media/work/divine-rampage/shots/05.webp', caption: 'Shot 05' },
+      { src: 'media/work/divine-rampage/shots/01.mp4', caption: 'Shot 01' },
+      { src: 'media/work/divine-rampage/shots/02.mp4', caption: 'Shot 02' },
+      { src: 'media/work/divine-rampage/shots/03.mp4', caption: 'Shot 03' },
+      { src: 'media/work/divine-rampage/shots/04.mp4', caption: 'Shot 04' },
+      { src: 'media/work/divine-rampage/shots/05.mp4', caption: 'Shot 05' },
     ],
     stills: Array.from({ length: 16 }, (_, i) => ({
       src: `media/work/divine-rampage/frames/${String(i + 1).padStart(2, '0')}.jpg`,
@@ -80,47 +80,47 @@ export const projects = [
         {
           title: 'River water simulation',
           body: 'Water running through the greyboxed river, before any lighting or lookdev.',
-          media: { type: 'image', src: 'media/work/divine-rampage/bd/river-sim.webp' },
+          media: { type: 'video', src: 'media/work/divine-rampage/bd/river-sim.mp4' },
         },
         {
           title: 'Mid-river fight',
           body: 'The fight blocked out against the simulated water.',
-          media: { type: 'image', src: 'media/work/divine-rampage/bd/river-fight.webp' },
+          media: { type: 'video', src: 'media/work/divine-rampage/bd/river-fight.mp4' },
         },
         {
           title: 'Hook impact',
           body: 'The burst where the hook lands on the temple steps.',
-          media: { type: 'image', src: 'media/work/divine-rampage/bd/hook-impact.webp' },
+          media: { type: 'video', src: 'media/work/divine-rampage/bd/hook-impact.mp4' },
         },
         {
           title: 'Tower destruction',
           body: 'Rigid-body breakup of the tower.',
-          media: { type: 'image', src: 'media/work/divine-rampage/bd/tower-destruction.webp' },
+          media: { type: 'video', src: 'media/work/divine-rampage/bd/tower-destruction.mp4' },
         },
         {
           title: 'Requiem of Souls',
           body: 'The radial burst of the ultimate.',
-          media: { type: 'image', src: 'media/work/divine-rampage/bd/requiem.webp' },
+          media: { type: 'video', src: 'media/work/divine-rampage/bd/requiem.mp4' },
         },
         {
           title: 'Shadowraze',
           body: 'The close-range flame burst.',
-          media: { type: 'image', src: 'media/work/divine-rampage/bd/shadowraze.webp' },
+          media: { type: 'video', src: 'media/work/divine-rampage/bd/shadowraze.mp4' },
         },
         {
           title: 'Shackles',
           body: 'The binding strands.',
-          media: { type: 'image', src: 'media/work/divine-rampage/bd/shackles.webp' },
+          media: { type: 'video', src: 'media/work/divine-rampage/bd/shackles.mp4' },
         },
         {
           title: 'Desolator arms',
           body: 'The Desolator arms setup.',
-          media: { type: 'image', src: 'media/work/divine-rampage/bd/desolator.webp' },
+          media: { type: 'video', src: 'media/work/divine-rampage/bd/desolator.mp4' },
         },
         {
           title: 'Shadow Fiend sculpt',
           body: 'Turntable of the character sculpt.',
-          media: { type: 'image', src: 'media/work/divine-rampage/bd/fiend-sculpt.webp' },
+          media: { type: 'video', src: 'media/work/divine-rampage/bd/fiend-sculpt.mp4' },
         },
       ],
     },
@@ -175,9 +175,9 @@ export const projects = [
     // Full-width animated plates, the way the gallery presents them. These are
     // animated WebP, which plays in a plain <img>.
     plates: [
-      { src: 'media/work/sphere-master/anim/01.webp', caption: 'Sequence 01' },
-      { src: 'media/work/sphere-master/anim/02.webp', caption: 'Sequence 02' },
-      { src: 'media/work/sphere-master/anim/03.webp', caption: 'Sequence 03' },
+      { src: 'media/work/sphere-master/anim/01.mp4', caption: 'Sequence 01' },
+      { src: 'media/work/sphere-master/anim/02.mp4', caption: 'Sequence 02' },
+      { src: 'media/work/sphere-master/anim/03.mp4', caption: 'Sequence 03' },
     ],
     stills: Array.from({ length: 20 }, (_, i) => ({
       src: `media/work/sphere-master/stills/${String(i + 1).padStart(2, '0')}.jpg`,
@@ -191,27 +191,27 @@ export const projects = [
         {
           title: 'Cloth simulation',
           body: "Cloth on Invoker's robe and cape, simulated over the animation cache.",
-          media: { type: 'image', src: 'media/work/sphere-master/bd/cloth.webp' },
+          media: { type: 'video', src: 'media/work/sphere-master/bd/cloth.mp4' },
         },
         {
           title: 'Hand effects',
           body: 'The magic gathering in the hands as the spheres are summoned.',
-          media: { type: 'image', src: 'media/work/sphere-master/bd/hand.webp' },
+          media: { type: 'video', src: 'media/work/sphere-master/bd/hand.mp4' },
         },
         {
           title: 'Charge build-up',
           body: 'The longer hold before release, building on the same setup.',
-          media: { type: 'image', src: 'media/work/sphere-master/bd/hand_02.webp' },
+          media: { type: 'video', src: 'media/work/sphere-master/bd/hand_02.mp4' },
         },
         {
           title: 'Meteor',
           body: 'The meteor — trail, flight and impact.',
-          media: { type: 'image', src: 'media/work/sphere-master/bd/meteor.webp' },
+          media: { type: 'video', src: 'media/work/sphere-master/bd/meteor.mp4' },
         },
         {
           title: 'Sun Strike',
           body: 'The Sun Strike beam and its build-up.',
-          media: { type: 'image', src: 'media/work/sphere-master/bd/sunstrike.webp' },
+          media: { type: 'video', src: 'media/work/sphere-master/bd/sunstrike.mp4' },
         },
       ],
     },

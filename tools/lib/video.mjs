@@ -33,17 +33,22 @@ const mb = (n) => `${(n / 1024 / 1024).toFixed(1)} MB`
  *             crf    quality, lower is better; 23–26 is the sane band
  *             audio  keep the audio track (off by default: these play muted)
  */
-export function transcode(src, dest, { width = 1440, crf = 24, audio = false } = {}) {
+export function transcode(src, dest, { width = 1440, crf = 24, audio = false, start, duration } = {}) {
   mkdirSync(dirname(dest), { recursive: true })
   const tmp = `${dest}.tmp.mp4`
 
   const args = [
     '-y',
     '-loglevel', 'error',
+    // -ss before -i seeks by keyframe, which is fast and accurate enough here.
+    ...(start ? ['-ss', String(start)] : []),
+    ...(duration ? ['-t', String(duration)] : []),
     '-i', src,
-    // Never upscale: `min(iw,W)` leaves smaller sources alone. -2 keeps the
-    // other axis even, which H.264 requires.
-    '-vf', `scale='min(iw,${width})':-2:flags=lanczos`,
+    // Never upscale: `min(iw,W)` leaves smaller sources alone. Both axes must
+    // come out even or libx264 refuses — `-2` handles the height, and trunc()
+    // handles the width, which otherwise passes an odd source size straight
+    // through (a 923px-wide GIF failed exactly this way).
+    '-vf', `scale='trunc(min(iw,${width})/2)*2':-2:flags=lanczos`,
     '-c:v', 'libx264',
     '-preset', 'slow',
     '-crf', String(crf),
@@ -83,15 +88,18 @@ export function isWebCodec(src) {
  * is stepped down until the result is actually smaller, and if even the last
  * step loses, the original is kept whenever it is already web-playable.
  */
-export function transcodeAdaptive(src, dest, { crfs = [24, 28, 32], ...rest } = {}) {
+export function transcodeAdaptive(src, dest, { crfs, crf, ...rest } = {}) {
+  // A caller passing `crf` means "start here", not "ignore me" — the ladder is
+  // built from it. Passing `crfs` explicitly still wins.
+  const ladder = crfs ?? (crf ? [crf, crf + 4, crf + 8] : [24, 28, 32])
   const srcSize = statSync(src).size
   let best = null
 
-  for (const crf of crfs) {
-    const r = transcode(src, dest, { ...rest, crf })
+  for (const step of ladder) {
+    const r = transcode(src, dest, { ...rest, crf: step })
     // 0.9 rather than 1.0: a 5% saving is not worth a re-encode's quality cost.
-    if (r.to <= srcSize * 0.9) return { ...r, crf, kept: false }
-    best = { ...r, crf }
+    if (r.to <= srcSize * 0.9) return { ...r, crf: step, kept: false }
+    best = { ...r, crf: step }
   }
 
   if (isWebCodec(src)) {

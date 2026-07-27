@@ -82,25 +82,45 @@ function Video({ src, poster, hoverPlay, label, className, loopStart = 0 }) {
     }
   }, [hoverPlay])
 
-  // The autoplay attribute alone is not enough for a background clip: muted
-  // autoplay never starts while the tab is hidden, and can be refused outright
-  // under data saver or low power mode. Nudge it on mount, once it has enough
-  // data, and whenever the page comes back into view — otherwise the hero can
-  // sit on a dead frame with no way to recover.
+  /**
+   * Looping clips play only while they are on screen.
+   *
+   * This is what makes a page of thirty animations affordable. With
+   * `preload="none"` nothing is fetched until the observer calls play(), so a
+   * visitor downloads the clips they actually scroll to and no others — and
+   * anything scrolled past stops decoding instead of burning CPU off-screen.
+   * It also replaces the plain `autoplay` attribute, which cannot be revoked
+   * once the browser has started pulling the file.
+   *
+   * The visibilitychange handler covers the case autoplay always trips over:
+   * muted playback never starts while the tab is hidden, so it has to be
+   * retried when the tab comes back.
+   */
   useEffect(() => {
     const el = ref.current
     if (!el || hoverPlay) return
 
-    const nudge = () => {
-      if (el.paused && !document.hidden) el.play().catch(() => {})
+    let onScreen = false
+    const sync = () => {
+      if (onScreen && !document.hidden) el.play().catch(() => {})
+      else el.pause()
     }
-    nudge()
 
-    el.addEventListener('canplay', nudge)
-    document.addEventListener('visibilitychange', nudge)
+    // Starts loading slightly before the clip scrolls in, so it is already
+    // moving by the time it is actually visible.
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        onScreen = entry.isIntersecting
+        sync()
+      },
+      { rootMargin: '250px 0px' },
+    )
+    io.observe(el)
+    document.addEventListener('visibilitychange', sync)
+
     return () => {
-      el.removeEventListener('canplay', nudge)
-      document.removeEventListener('visibilitychange', nudge)
+      io.disconnect()
+      document.removeEventListener('visibilitychange', sync)
     }
   }, [hoverPlay])
 
@@ -139,8 +159,10 @@ function Video({ src, poster, hoverPlay, label, className, loopStart = 0 }) {
       muted
       loop={!loopStart}
       playsInline
-      preload="metadata"
-      autoPlay={!hoverPlay}
+      /* Nothing is fetched until something calls play() — the observer above
+         for looping clips, a pointer for hover ones. `autoplay` is deliberately
+         absent: it starts a download that cannot be called back. */
+      preload="none"
       aria-label={label}
     />
   )
