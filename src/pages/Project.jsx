@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import Media from '../components/Media'
+import VideoEmbed from '../components/VideoEmbed'
 import Reveal from '../components/Reveal'
 import Lightbox from '../components/Lightbox'
 import NotFound from './NotFound'
@@ -47,6 +48,7 @@ export default function Project() {
     tools,
     links,
     description,
+    video,
     media,
     plates = [],
     stills = [],
@@ -135,18 +137,32 @@ export default function Project() {
           {summary && <p className="proj__sub">{summary}</p>}
         </Reveal>
 
-        <Reveal className="proj__hero">
-          <Media
-            kind={media.loop ? 'video' : 'image'}
-            src={media.loop || media.poster}
-            poster={media.poster}
-            real={real}
-            seed={`${slug}-hero`}
-            label={title}
-            alt={`${title} — key frame`}
-            motion
-          />
-        </Reveal>
+        {/* When there is a film to watch it takes the top slot outright — the
+            embed already uses the key frame as its poster, so showing that
+            frame again above it would just be the same image twice. */}
+        {video ? (
+          <Reveal>
+            <VideoEmbed
+              provider={video.provider}
+              id={video.id}
+              poster={real ? media.poster : undefined}
+              title={title}
+            />
+          </Reveal>
+        ) : (
+          <Reveal className="proj__hero">
+            <Media
+              kind={media.loop ? 'video' : 'image'}
+              src={media.loop || media.poster}
+              poster={media.poster}
+              real={real}
+              seed={`${slug}-hero`}
+              label={title}
+              alt={`${title} — key frame`}
+              motion
+            />
+          </Reveal>
+        )}
 
         <div className="proj__cols">
           <Reveal as="aside" className="meta">

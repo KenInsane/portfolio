@@ -56,6 +56,9 @@ export const projects = [
         href: 'https://www.behance.net/gallery/231517543/Divine-Rampage',
       },
     ],
+    // The film itself, embedded at the top of the page. Nothing is requested
+    // from the host until a visitor presses play — see VideoEmbed.
+    video: { provider: 'youtube', id: 'j9GB2K8imP8' },
     media: {
       poster: 'media/work/divine-rampage/poster.jpg',
       thumb: 'media/work/divine-rampage/thumb.jpg',
@@ -165,6 +168,7 @@ export const projects = [
         href: 'https://www.behance.net/gallery/205951281/The-Sphere-Master',
       },
     ],
+    video: { provider: 'youtube', id: 'LJ6CoMgr2U8' },
     media: {
       poster: 'media/work/sphere-master/poster.jpg',
       thumb: 'media/work/sphere-master/thumb.jpg',
@@ -265,6 +269,7 @@ export const projects = [
         href: 'https://www.behance.net/gallery/160498189/The-New-VAIO-FE',
       },
     ],
+    video: { provider: 'vimeo', id: '786272917' },
     media: {
       poster: 'media/work/vaio-fe/poster.jpg',
       thumb: 'media/work/vaio-fe/thumb.jpg',
