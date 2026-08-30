@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import Media from './Media'
 import Reveal from './Reveal'
-import { projects } from '../data/projects'
+import { publishedProjects } from '../data/projects'
 
 const ArrowIcon = () => (
   <svg viewBox="0 0 16 16" aria-hidden="true">
@@ -66,7 +66,7 @@ export default function WorkGrid() {
         </Reveal>
 
         <div className="stack">
-          {projects.map((project, i) => (
+          {publishedProjects.map((project, i) => (
             <Card key={project.slug} project={project} index={i} />
           ))}
         </div>

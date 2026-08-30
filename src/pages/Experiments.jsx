@@ -4,6 +4,7 @@ import Media from '../components/Media'
 import Reveal from '../components/Reveal'
 import Lightbox from '../components/Lightbox'
 import { experiments } from '../data/experiments'
+import { SITE_TITLE } from '../data/profile'
 
 const BackArrow = () => (
   <svg viewBox="0 0 14 10" aria-hidden="true">
@@ -20,9 +21,9 @@ export default function Experiments() {
   const [index, setIndex] = useState(null)
 
   useEffect(() => {
-    document.title = 'Experiments — Portfolio'
+    document.title = `Experiments — ${SITE_TITLE.split(' — ')[0]}`
     return () => {
-      document.title = 'VFX Artist — Portfolio'
+      document.title = SITE_TITLE
     }
   }, [])
 

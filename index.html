@@ -2,20 +2,25 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <!-- PNG rather than SVG on purpose: an SVG favicon would carry the glyph as
+         text and fall back to tofu wherever a Japanese font is missing. -->
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="./favicon-512.png" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#08090a" />
-    <title>VFX Artist — Portfolio</title>
+    <meta name="theme-color" content="#0a0a0a" />
+    <title>ケンInsane — VFX Artist</title>
     <meta
       name="description"
-      content="FX, lighting and compositing for short films, cinematics and broadcast. Selected work and shot breakdowns."
+      content="VFX, scene assembly and lookdev, rendering and compositing for short films and cinematics. Selected work and shot breakdowns."
     />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="VFX Artist — Portfolio" />
+    <meta property="og:title" content="ケンInsane — VFX Artist" />
     <meta
       property="og:description"
-      content="FX, lighting and compositing for short films, cinematics and broadcast."
+      content="VFX, scene assembly and lookdev, rendering and compositing for short films and cinematics."
     />
+    <meta property="og:image" content="./favicon-512.png" />
   </head>
   <body>
     <div id="root"></div>

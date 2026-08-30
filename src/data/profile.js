@@ -2,6 +2,10 @@
  * Everything personal lives here. This is the only file you must edit before
  * showing the site to anyone.
  */
+/** Browser tab title. Must match the <title> in index.html, which is what a
+ *  visitor sees before React has mounted. */
+export const SITE_TITLE = 'ケンInsane — VFX Artist'
+
 export const profile = {
   name: 'ケンInsane',
 

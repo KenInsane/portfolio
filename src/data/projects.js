@@ -523,7 +523,16 @@ export const projects = [
 
 export const getProject = (slug) => projects.find((p) => p.slug === slug)
 
+/**
+ * Only the projects that actually have media behind them.
+ *
+ * The rest are scaffolding: real entries with copy but no files yet, kept so
+ * that dropping media in is all it takes to publish one. Nothing user-facing
+ * may link to those, or the site advertises pages with nothing on them.
+ */
+export const publishedProjects = projects.filter((p) => p.real)
+
 export const getNextProject = (slug) => {
-  const i = projects.findIndex((p) => p.slug === slug)
-  return i === -1 ? null : projects[(i + 1) % projects.length]
+  const i = publishedProjects.findIndex((p) => p.slug === slug)
+  return i === -1 ? null : publishedProjects[(i + 1) % publishedProjects.length]
 }
