@@ -77,6 +77,7 @@ export default function Experiments() {
                 <Media
                   kind={e.media?.kind ?? 'image'}
                   src={e.media?.src}
+                  poster={e.media?.poster}
                   real={e.real}
                   seed={e.id}
                   label={e.title}

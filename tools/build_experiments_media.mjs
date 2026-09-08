@@ -27,7 +27,7 @@ import { resolve, dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { converters, ensure, report, mb } from './lib/media.mjs'
 import { mp4Dimensions } from './lib/mp4.mjs'
-import { transcodeAdaptive, hasFfmpeg } from './lib/video.mjs'
+import { transcodeAdaptive, posterFrame, hasFfmpeg } from './lib/video.mjs'
 
 if (!hasFfmpeg()) {
   console.error('ffmpeg not found — see tools/lib/video.mjs for the expected path')
@@ -110,7 +110,17 @@ const VIDEOS = [
   ['explo_preview.mp4', 'explo-preview'],
   ['beach_water_rnd.mp4', 'beach-water'],
   ['beach_water_rnd_v2.mp4', 'beach-water-v2'],
-  ['Am_rndr.mov', 'antimage-aura', ANTIMAGE, { width: 720, crf: 32 }],
+  [
+    'Am_rndr.mov',
+    'antimage-aura',
+    ANTIMAGE,
+    // The page's shared 1000/CRF 28 gave 20 MB here and 720/CRF 32 visibly
+    // destroyed the aura, so this clip is encoded on its own terms: full 1080
+    // width, veryslow, and stronger adaptive quantisation to protect the dark
+    // smoke gradients where banding appears first. ~14 MB, and it only ever
+    // downloads for someone who scrolls to it.
+    { width: 1080, crf: 30, preset: 'veryslow', x264Params: 'aq-mode=3:aq-strength=1.1', poster: true },
+  ],
 ]
 
 const c = converters({ out: OUT, force })
@@ -169,6 +179,22 @@ for (const [file, slug, from, encode] of VIDEOS) {
   }
 }
 
+// A poster is worth it only where the file is big enough that the wait shows.
+for (const [, slug, , encode] of VIDEOS) {
+  if (!encode?.poster) continue
+  const dest = join(OUT, 'video', `${slug}.jpg`)
+  if (existsSync(dest) && !force) {
+    console.log(`skip  video/${slug}.jpg`)
+    continue
+  }
+  try {
+    posterFrame(join(OUT, 'video', `${slug}.mp4`), dest, { width: 1080, at: 0.1 })
+    console.log(`post  video/${slug}.jpg  ${mb(statSync(dest).size)}`)
+  } catch (err) {
+    console.warn(`! poster ${slug}: ${err.message}`)
+  }
+}
+
 /** Output filename for a video entry — everything lands as .mp4 now. */
 const videoName = ([, slug]) => `${slug}.mp4`
 
@@ -193,7 +219,11 @@ for (const entry of VIDEOS) {
 // Everything here is regenerated from the Desktop, so removal is cheap.
 const expected = {
   anim: new Set(GIFS.map(([, slug]) => `${slug}.mp4`)),
-  video: new Set(VIDEOS.map(videoName)),
+  // Posters live beside their clips and must survive the sweep.
+  video: new Set([
+    ...VIDEOS.map(videoName),
+    ...VIDEOS.filter(([, , , e]) => e?.poster).map(([, slug]) => `${slug}.jpg`),
+  ]),
 }
 let pruned = 0
 for (const [dir, keep] of Object.entries(expected)) {

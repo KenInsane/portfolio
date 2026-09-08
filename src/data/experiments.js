@@ -22,12 +22,15 @@ const clip =
   (ext = 'mp4') =>
   (slug) => ({ kind: 'video', src: `media/experiments/video/${slug}.${ext}` })
 const mp4 = clip('mp4')
+// Heavier clips also ship a still, so the tile is not blank while the file
+// loads — with preload="none" nothing arrives until playback starts.
+const mp4Poster = (slug) => ({ ...mp4(slug), poster: `media/experiments/video/${slug}.jpg` })
 
 const list = [
   // Turntable of the Anti-Mage persona print, with its aura passes. Source is
   // a 495 MB ProRes shot 1440x2560 — see the build script for why this one
   // carries its own encode settings.
-  ['antimage-aura', 'Anti-Mage aura FX', mp4],
+  ['antimage-aura', 'Anti-Mage aura FX', mp4Poster],
   ['transition-filaments', 'Transition FX v004', anim],
   // Two Marci passes now, so both carry their version.
   ['marci', 'Marci FX v005', anim],

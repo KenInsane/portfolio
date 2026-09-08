@@ -33,7 +33,7 @@ const mb = (n) => `${(n / 1024 / 1024).toFixed(1)} MB`
  *             crf    quality, lower is better; 23–26 is the sane band
  *             audio  keep the audio track (off by default: these play muted)
  */
-export function transcode(src, dest, { width = 1440, crf = 24, audio = false, start, duration } = {}) {
+export function transcode(src, dest, { width = 1440, crf = 24, audio = false, start, duration, preset = 'slow', x264Params } = {}) {
   mkdirSync(dirname(dest), { recursive: true })
   const tmp = `${dest}.tmp.mp4`
 
@@ -50,8 +50,11 @@ export function transcode(src, dest, { width = 1440, crf = 24, audio = false, st
     // through (a 923px-wide GIF failed exactly this way).
     '-vf', `scale='trunc(min(iw,${width})/2)*2':-2:flags=lanczos`,
     '-c:v', 'libx264',
-    '-preset', 'slow',
+    '-preset', preset,
     '-crf', String(crf),
+    // Hard-to-compress content (smoke, fine particulate) can be pushed further
+    // with stronger adaptive quantisation than the defaults use.
+    ...(x264Params ? ['-x264-params', x264Params] : []),
     // 4:2:0 + High profile is what every browser and phone can decode.
     '-pix_fmt', 'yuv420p',
     '-profile:v', 'high',
@@ -112,3 +115,37 @@ export function transcodeAdaptive(src, dest, { crfs, crf, ...rest } = {}) {
 }
 
 export { join }
+
+/**
+ * A single frame as a JPEG, for use as a <video> poster.
+ *
+ * With `preload="none"` a clip shows nothing at all until it is played, which
+ * is a visible hole on the heavier files. A poster fills that instantly.
+ * `at` is a 0..1 position — a little way in, since frame zero is often a fade.
+ */
+export function posterFrame(src, dest, { width = 1080, at = 0.1, quality = 4 } = {}) {
+  mkdirSync(dirname(dest), { recursive: true })
+  const probe = spawnSync(
+    FFMPEG.replace(/ffmpeg\.exe$/i, 'ffprobe.exe'),
+    ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', src],
+    { encoding: 'utf8' },
+  )
+  const duration = parseFloat((probe.stdout || '').trim()) || 0
+  const seek = duration ? (duration * at).toFixed(2) : '0'
+
+  const res = spawnSync(
+    FFMPEG,
+    [
+      '-y', '-loglevel', 'error',
+      '-ss', seek,
+      '-i', src,
+      '-frames:v', '1',
+      '-vf', `scale='trunc(min(iw,${width})/2)*2':-2:flags=lanczos`,
+      '-q:v', String(quality),
+      dest,
+    ],
+    { encoding: 'utf8' },
+  )
+  if (res.status !== 0) throw new Error((res.stderr || '').trim().slice(0, 200))
+  return statSync(dest).size
+}
