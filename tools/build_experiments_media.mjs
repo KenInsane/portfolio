@@ -88,6 +88,7 @@ const GIFS = [
 // Added later, and these live in X:\downloads rather than on the Desktop — the
 // source folder is per-entry so both can feed the same page.
 const DOWNLOADS = 'X:\\downloads'
+const ANTIMAGE = 'X:/_CLOUDE/AntiMage_Assembly'
 
 // Everything here is re-encoded to H.264 (see lib/video.mjs), so the source
 // container and codec no longer matter — a QuickTime .mov and an undecodable
@@ -109,6 +110,7 @@ const VIDEOS = [
   ['explo_preview.mp4', 'explo-preview'],
   ['beach_water_rnd.mp4', 'beach-water'],
   ['beach_water_rnd_v2.mp4', 'beach-water-v2'],
+  ['Am_rndr.mov', 'antimage-aura', ANTIMAGE, { width: 720, crf: 32 }],
 ]
 
 const c = converters({ out: OUT, force })
@@ -146,7 +148,7 @@ for (const [file, slug] of GIFS) {
 
 console.log(`\n${VIDEOS.length} videos -> copied as-is`)
 let vBytes = 0
-for (const [file, slug, from] of VIDEOS) {
+for (const [file, slug, from, encode] of VIDEOS) {
   const src = join(from ?? DESK, file)
   if (!existsSync(src)) {
     console.warn(`! missing ${src}`)
@@ -159,7 +161,7 @@ for (const [file, slug, from] of VIDEOS) {
     continue
   }
   try {
-    const r = transcodeAdaptive(src, dest, VIDEO_ENCODE)
+    const r = transcodeAdaptive(src, dest, { ...VIDEO_ENCODE, ...encode })
     vBytes += r.to
     console.log(`${r.kept ? 'copy' : 'h264'}  video/${slug}.mp4  ${r.label}${r.crf ? ` [crf ${r.crf}]` : ''}`)
   } catch (err) {

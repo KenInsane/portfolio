@@ -24,6 +24,10 @@ const clip =
 const mp4 = clip('mp4')
 
 const list = [
+  // Turntable of the Anti-Mage persona print, with its aura passes. Source is
+  // a 495 MB ProRes shot 1440x2560 — see the build script for why this one
+  // carries its own encode settings.
+  ['antimage-aura', 'Anti-Mage aura FX', mp4],
   ['transition-filaments', 'Transition FX v004', anim],
   // Two Marci passes now, so both carry their version.
   ['marci', 'Marci FX v005', anim],
