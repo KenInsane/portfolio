@@ -28,6 +28,7 @@ export const profile = {
     { label: 'YouTube', href: 'https://www.youtube.com/@kxxinsane' },
     { label: 'Instagram', href: 'https://www.instagram.com/ins4neken/' },
     { label: 'Behance', href: 'https://www.behance.net/insane1' },
+    { label: 'Telegram', href: 'https://t.me/kagami_no_naka' },
   ],
 
   // Hero background + the file the PLAY REEL button opens.
