@@ -31,9 +31,9 @@ export const projects = [
     client: 'Blooprint',
     status: null,
     summary: "An opening intro made for Blooprint's Rust series.",
-    // Unknown: the Behance credits page is still all "NAME" placeholders and the
-    // gallery lists seven owners without roles, so nothing is claimed here yet.
-    roles: [],
+    // A team film; this page shows only the user's part of it, in his words.
+    // The rest of the breakdown is on Behance, linked below.
+    roles: ['SH07, SH08, SH10', 'VFX'],
     tools: ['Unreal Engine 5', 'Nuke', 'Blender', 'Houdini'],
     aspect: 1.778,
     real: true,
@@ -41,6 +41,8 @@ export const projects = [
     description: [
       'A cinematic built in the world of Rust, in a visual style set by the brief.',
       'Every scene mirrors a moment from the episode it opens — the one that closed the series.',
+      'My part was shots SH07, SH08 and SH10, and the VFX. The full breakdown, with the ' +
+        "rest of the team's work, is on Behance.",
     ],
     links: [
       {
@@ -53,37 +55,9 @@ export const projects = [
       thumb: `${SJ4}/thumb.jpg`,
       loop: '',
     },
-    // Same order and section subtitles as the Behance gallery. Compositing is
-    // left out: in the kit it is a header plate with nothing under it yet.
+    // Only the user's own part. Concept, character, rigging and the other nine
+    // shots are the team's, and live on the Behance page instead.
     sections: [
-      {
-        title: 'Concept',
-        tag: 'character design',
-        layout: 'stack',
-        items: [sj4('concept/01.jpg', 'Concept'), sj4('concept/02.jpg', 'Concept and the 3D model')],
-      },
-      {
-        title: 'Character',
-        tag: '3d model',
-        layout: 'stack',
-        items: [
-          sj4('character/01.jpg', 'Base body, four views'),
-          sj4('character/02.jpg', 'With the cloak, four views'),
-        ],
-      },
-      {
-        title: 'Rigging',
-        tag: 'character, cloak & foliage rigs',
-        layout: 'grid',
-        items: [
-          sj4('rig/01.mp4', 'Body rig'),
-          sj4('rig/02.mp4', 'Hips'),
-          sj4('rig/03.mp4', 'Cloak'),
-          sj4('rig/04.mp4', 'Cloak, full'),
-          // A different rig entirely, and the odd one out of five — full row.
-          sj4('rig/05.mp4', 'Foliage rig', { wide: true }),
-        ],
-      },
       {
         title: '2D FX',
         tag: 'hand-drawn effects',
@@ -91,13 +65,16 @@ export const projects = [
         items: [sj4('fx/compare.mp4', 'Drawn FX layer and the final comp')],
       },
       {
-        title: 'Animation',
-        tag: 'shot-by-shot playblasts',
-        layout: 'grid',
-        items: Array.from({ length: 12 }, (_, i) => {
-          const n = String(i + 1).padStart(2, '0')
-          return sj4(`anim/${n}.mp4`, `Shot ${n}`)
-        }),
+        title: 'Shots',
+        tag: 'sh07 / sh08 / sh10',
+        // Three clips would strand one in a two-up grid, and these are the work
+        // itself, so each gets the full width.
+        layout: 'stack',
+        items: [
+          sj4('shots/sh07.mp4', 'SH07'),
+          sj4('shots/sh08.mp4', 'SH08'),
+          sj4('shots/sh10.mp4', 'SH10'),
+        ],
       },
     ],
   },
