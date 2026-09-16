@@ -3,8 +3,8 @@
  *
  * The site shows only the user's own part of this collaboration: shots SH07
  * (Launch Site), SH08 (the boat to the Oil Rig) and SH10 (the rocket raid that
- * closes the film), his two shot breakdowns, and the 2D FX. Everything else —
- * concept, character, rigging, animation, the other shots — belongs to the rest
+ * closes the film) and his two shot breakdowns. Everything else — concept,
+ * character, rigging, animation, 2D FX, the other shots — belongs to the rest
  * of the team and is reachable through the Behance link on the page instead.
  * Output for anything not listed here is pruned, so a build never ships media
  * that the page no longer shows.
@@ -14,7 +14,6 @@
  *              itself is not shipped — only these three shots)
  *   breakdowns the two GIFs that open the BREAKDOWN section of the Behance page;
  *              fetch them first with `node tools/fetch_sj4_behance.mjs 16 17`
- *   2D FX      the layer | comp side-by-side from the Behance kit
  *   cover      the clean Launch Site plate the kit's hero was built from (the
  *              hero itself is darkened to sit under type)
  *
@@ -131,15 +130,6 @@ for (const b of BREAKDOWNS) {
     // at 1:1 on these flat clay renders and ~40% lighter.
     return transcodeAdaptive(src, dest, { width: 1600, crf: 28 })
   })
-}
-
-// ---- 2D FX ---------------------------------------------------------------- //
-console.log('\nvfx')
-{
-  const dest = join(OUT, 'fx', 'compare.mp4')
-  clip('fx/compare.mp4', dest, () =>
-    transcodeAdaptive(`${KIT}/04_2D_FX/2D_FX_compare_1920x540.mp4`, dest, { width: 1920, crf: 24 }),
-  )
 }
 
 // ---- prune ---------------------------------------------------------------- //

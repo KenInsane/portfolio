@@ -42,7 +42,7 @@ export const projects = [
       'A cinematic built in the world of Rust, in a visual style set by the brief.',
       'Every scene mirrors a moment from the episode it opens — the one that closed the series.',
       'My part was shots SH07, SH08 and SH10 — Launch Site, the boat to the Oil Rig and ' +
-        'the closing rocket raid — and the VFX. The full breakdown, with the ' +
+        'the closing rocket raid — and their VFX. The full breakdown, with the ' +
         "rest of the team's work, is on Behance.",
     ],
     links: [
@@ -56,8 +56,8 @@ export const projects = [
       thumb: `${SJ4}/thumb.jpg`,
       loop: '',
     },
-    // Only the user's own part. Concept, character, rigging, animation and the
-    // other shots are the team's, and live on the Behance page instead.
+    // Only the user's own part. Concept, character, rigging, animation, 2D FX
+    // and the other shots are the team's, and live on the Behance page instead.
     sections: [
       {
         title: 'Shots',
@@ -80,12 +80,6 @@ export const projects = [
           sj4('breakdown/sh07.mp4', 'SH07 breakdown'),
           sj4('breakdown/sh08.mp4', 'SH08 breakdown'),
         ],
-      },
-      {
-        title: '2D FX',
-        tag: 'hand-drawn effects',
-        layout: 'stack',
-        items: [sj4('fx/compare.mp4', 'Drawn FX layer and the final comp')],
       },
     ],
   },
