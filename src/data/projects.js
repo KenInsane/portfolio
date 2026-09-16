@@ -41,7 +41,8 @@ export const projects = [
     description: [
       'A cinematic built in the world of Rust, in a visual style set by the brief.',
       'Every scene mirrors a moment from the episode it opens — the one that closed the series.',
-      'My part was shots SH07, SH08 and SH10, and the VFX. The full breakdown, with the ' +
+      'My part was shots SH07, SH08 and SH10 — Launch Site, the boat to the Oil Rig and ' +
+        'the closing rocket raid — and the VFX. The full breakdown, with the ' +
         "rest of the team's work, is on Behance.",
     ],
     links: [
@@ -55,15 +56,9 @@ export const projects = [
       thumb: `${SJ4}/thumb.jpg`,
       loop: '',
     },
-    // Only the user's own part. Concept, character, rigging and the other nine
-    // shots are the team's, and live on the Behance page instead.
+    // Only the user's own part. Concept, character, rigging, animation and the
+    // other shots are the team's, and live on the Behance page instead.
     sections: [
-      {
-        title: '2D FX',
-        tag: 'hand-drawn effects',
-        layout: 'stack',
-        items: [sj4('fx/compare.mp4', 'Drawn FX layer and the final comp')],
-      },
       {
         title: 'Shots',
         tag: 'sh07 / sh08 / sh10',
@@ -71,10 +66,26 @@ export const projects = [
         // itself, so each gets the full width.
         layout: 'stack',
         items: [
-          sj4('shots/sh07.mp4', 'SH07'),
-          sj4('shots/sh08.mp4', 'SH08'),
-          sj4('shots/sh10.mp4', 'SH10'),
+          sj4('shots/sh07.mp4', 'SH07 — Launch Site'),
+          sj4('shots/sh08.mp4', 'SH08 — Oil Rig'),
+          sj4('shots/sh10.mp4', 'SH10 — Rocket raid'),
         ],
+      },
+      {
+        // The first two GIFs of the Behance BREAKDOWN section — the user's own.
+        title: 'Breakdown',
+        tag: 'shot by shot',
+        layout: 'stack',
+        items: [
+          sj4('breakdown/sh07.mp4', 'SH07 breakdown'),
+          sj4('breakdown/sh08.mp4', 'SH08 breakdown'),
+        ],
+      },
+      {
+        title: '2D FX',
+        tag: 'hand-drawn effects',
+        layout: 'stack',
+        items: [sj4('fx/compare.mp4', 'Drawn FX layer and the final comp')],
       },
     ],
   },
