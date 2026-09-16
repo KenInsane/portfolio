@@ -33,7 +33,7 @@ export const projects = [
     summary: "An opening intro made for Blooprint's Rust series.",
     // A team film; this page shows only the user's part of it, in his words.
     // The rest of the breakdown is on Behance, linked below.
-    roles: ['SH07, SH08, SH10', 'VFX'],
+    roles: ['SH07, SH08, SH10', 'VFX', 'Final lookdev'],
     tools: ['Unreal Engine 5', 'Nuke', 'Blender', 'Houdini'],
     aspect: 1.778,
     real: true,
@@ -42,8 +42,12 @@ export const projects = [
       'A cinematic built in the world of Rust, in a visual style set by the brief.',
       'Every scene mirrors a moment from the episode it opens — the one that closed the series.',
       'My part was shots SH07, SH08 and SH10 — Launch Site, the boat to the Oil Rig and ' +
-        'the closing rocket raid — and their VFX. The full breakdown, with the ' +
-        "rest of the team's work, is on Behance.",
+        'the closing rocket raid — and their VFX.',
+      // The look is the user's across the whole film, not just his three shots.
+      'I also created the final look development for the whole project: the post-process ' +
+        'in Unreal Engine, and the comp in Nuke that follows it, with a Kuwahara filter ' +
+        'among other tools.',
+      "The full breakdown, with the rest of the team's work, is on Behance.",
     ],
     links: [
       {
