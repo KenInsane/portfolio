@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import Media from '../components/Media'
 import VideoEmbed from '../components/VideoEmbed'
+import Sections from '../components/Sections'
 import Reveal from '../components/Reveal'
 import Lightbox from '../components/Lightbox'
 import NotFound from './NotFound'
@@ -53,6 +54,7 @@ export default function Project() {
     media,
     plates = [],
     stills = [],
+    sections = [],
     breakdown,
     aspect,
     stillsAspect,
@@ -94,7 +96,13 @@ export default function Project() {
     .map((s, i) => (bdOpenable[i] ? toItem({ src: s.media.src, caption: s.title }, i, 'bd') : null))
     .filter(Boolean)
 
-  const galleryItems = [...plateItems, ...stillItems, ...bdItems]
+  // Section items join the same gallery, after everything above them.
+  const sectionOffset = plateItems.length + stillItems.length + bdItems.length
+  const sectionItems = sections.flatMap((s) =>
+    s.items.map((it, i) => toItem({ src: it.src, caption: it.caption }, i, s.title)),
+  )
+
+  const galleryItems = [...plateItems, ...stillItems, ...bdItems, ...sectionItems]
   const bdIndex = (i) =>
     plateItems.length + stillItems.length + bdOpenable.slice(0, i).filter(Boolean).length
 
@@ -341,6 +349,16 @@ export default function Project() {
             </div>
           </div>
         </section>
+      )}
+
+      {sections.length > 0 && (
+        <Sections
+          sections={sections}
+          slug={slug}
+          real={real}
+          offset={sectionOffset}
+          onOpen={(index) => setLightbox({ index })}
+        />
       )}
 
       {next && (

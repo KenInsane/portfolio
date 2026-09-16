@@ -899,6 +899,62 @@ h4 {
   color: var(--dim);
 }
 
+/* ------------------------------------------------------------- sections -- */
+/* Named sections in gallery order (see Sections.jsx). A stack is one item per
+   row at full width — boards and wide comparisons. A grid is two-up and folds
+   to one column on a phone — clips that read fine at half width. */
+
+.sec {
+  display: grid;
+  gap: clamp(1rem, 2.5vw, 2rem);
+}
+
+/* Exactly two columns from tablet width up, not auto-fill. auto-fill at 460px
+   fell to one column on a 1024px screen (12 playblasts stacked full width),
+   and a lower minimum would open a third column on wide screens — which
+   strands the last clip of an odd-numbered set. */
+.sec--grid {
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+}
+
+@media (min-width: 880px) {
+  .sec--grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* An odd one out spans the row instead of being stranded on its own. */
+.sec__cell--wide {
+  grid-column: 1 / -1;
+}
+
+.sec__item {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  /* Declared per item from the build manifest, so nothing reflows on load. */
+  aspect-ratio: var(--sec-aspect, 16 / 9);
+  border-radius: var(--r);
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  cursor: zoom-in;
+  transition: border-color 0.4s var(--ease);
+}
+
+.sec__item:hover {
+  border-color: var(--line-hi);
+}
+
+/* The box already matches the file's own ratio, so cover crops nothing. */
+.sec__item > * {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 /* --------------------------------------------------------- project page -- */
 
 .proj {

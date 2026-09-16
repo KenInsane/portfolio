@@ -9,7 +9,99 @@
  * Copy below is a first draft written from the project files — read it once
  * and make it sound like you.
  */
+import sj4Aspects from './sj4.aspects.json'
+
+/** Solos Journey 4 media: path relative to its folder, plus the aspect the build
+ *  measured, so the section layout knows every shape before anything loads. */
+const SJ4 = 'media/work/solos-journey-4'
+const sj4 = (path, caption, extra) => ({
+  src: `${SJ4}/${path}`,
+  caption,
+  aspect: sj4Aspects[`${SJ4}/${path}`],
+  ...extra,
+})
+
 export const projects = [
+  {
+    // Title is SOLOS with an S on purpose — only the "JORNEY" spelling was a typo.
+    slug: 'solos-journey-4',
+    title: 'Solos Journey 4',
+    subtitle: 'Opening intro',
+    year: '2026',
+    client: 'Blooprint',
+    status: null,
+    summary: "An opening intro made for Blooprint's Rust series.",
+    // Unknown: the Behance credits page is still all "NAME" placeholders and the
+    // gallery lists seven owners without roles, so nothing is claimed here yet.
+    roles: [],
+    tools: ['Unreal Engine 5', 'Nuke', 'Blender', 'Houdini'],
+    aspect: 1.778,
+    real: true,
+    // The project's own copy, from the credits page of the Behance kit.
+    description: [
+      'A cinematic built in the world of Rust, in a visual style set by the brief.',
+      'Every scene mirrors a moment from the episode it opens — the one that closed the series.',
+    ],
+    links: [
+      {
+        label: 'View on Behance',
+        href: 'https://www.behance.net/gallery/255470741/Solos-Journey-4',
+      },
+    ],
+    media: {
+      poster: `${SJ4}/poster.jpg`,
+      thumb: `${SJ4}/thumb.jpg`,
+      loop: '',
+    },
+    // Same order and section subtitles as the Behance gallery. Compositing is
+    // left out: in the kit it is a header plate with nothing under it yet.
+    sections: [
+      {
+        title: 'Concept',
+        tag: 'character design',
+        layout: 'stack',
+        items: [sj4('concept/01.jpg', 'Concept'), sj4('concept/02.jpg', 'Concept and the 3D model')],
+      },
+      {
+        title: 'Character',
+        tag: '3d model',
+        layout: 'stack',
+        items: [
+          sj4('character/01.jpg', 'Base body, four views'),
+          sj4('character/02.jpg', 'With the cloak, four views'),
+        ],
+      },
+      {
+        title: 'Rigging',
+        tag: 'character, cloak & foliage rigs',
+        layout: 'grid',
+        items: [
+          sj4('rig/01.mp4', 'Body rig'),
+          sj4('rig/02.mp4', 'Hips'),
+          sj4('rig/03.mp4', 'Cloak'),
+          sj4('rig/04.mp4', 'Cloak, full'),
+          // A different rig entirely, and the odd one out of five — full row.
+          sj4('rig/05.mp4', 'Foliage rig', { wide: true }),
+        ],
+      },
+      {
+        title: '2D FX',
+        tag: 'hand-drawn effects',
+        layout: 'stack',
+        items: [sj4('fx/compare.mp4', 'Drawn FX layer and the final comp')],
+      },
+      {
+        title: 'Animation',
+        tag: 'shot-by-shot playblasts',
+        layout: 'grid',
+        items: Array.from({ length: 12 }, (_, i) => {
+          const n = String(i + 1).padStart(2, '0')
+          return sj4(`anim/${n}.mp4`, `Shot ${n}`)
+        }),
+      },
+    ],
+  },
+
   {
     slug: 'divine-rampage',
     title: 'Divine Rampage',

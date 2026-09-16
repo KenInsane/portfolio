@@ -33,7 +33,7 @@ const mb = (n) => `${(n / 1024 / 1024).toFixed(1)} MB`
  *             crf    quality, lower is better; 23–26 is the sane band
  *             audio  keep the audio track (off by default: these play muted)
  */
-export function transcode(src, dest, { width = 1440, crf = 24, audio = false, start, duration, preset = 'slow', x264Params } = {}) {
+export function transcode(src, dest, { width = 1440, crf = 24, audio = false, start, duration, preset = 'slow', x264Params, vfPre = '' } = {}) {
   mkdirSync(dirname(dest), { recursive: true })
   const tmp = `${dest}.tmp.mp4`
 
@@ -48,7 +48,9 @@ export function transcode(src, dest, { width = 1440, crf = 24, audio = false, st
     // come out even or libx264 refuses — `-2` handles the height, and trunc()
     // handles the width, which otherwise passes an odd source size straight
     // through (a 923px-wide GIF failed exactly this way).
-    '-vf', `scale='trunc(min(iw,${width})/2)*2':-2:flags=lanczos`,
+    // vfPre runs before scaling — e.g. a crop that isolates a viewport from a
+    // full screen recording, so the scale works on the part that matters.
+    '-vf', `${vfPre ? vfPre + ',' : ''}scale='trunc(min(iw,${width})/2)*2':-2:flags=lanczos`,
     '-c:v', 'libx264',
     '-preset', preset,
     '-crf', String(crf),
