@@ -339,7 +339,7 @@ export const projects = [
         'with distinguished craftsmanship and materials.',
       'Our main challenge was to deliver this essence with grace. We did it by weaving a story ' +
         'that links the product qualities to the wealth of Earth’s finest resources.',
-      'My part was the first half of the film — the particle effects.',
+      'My part was the first half of the film and the particle effects.',
     ],
     links: [
       {
