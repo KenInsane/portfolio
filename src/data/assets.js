@@ -39,16 +39,9 @@ export const assets = [
       'rig with every shader rebuilt for Cycles.',
     // What a 596 MB download actually contains, so nobody has to guess first.
     includes: [
-      ['Cinema 4D 2025', 'Octane materials, C4D Car Template rig, 43 textures linked from the folder'],
-      ['Blender 5.2', 'Rigacar rig, all 15 materials rebuilt as Cycles nodes, every texture packed in the .blend'],
+      ['Cinema 4D 2025', 'Octane materials, C4D Car Template rig'],
+      ['Blender 5.2', 'Rigacar rig, every texture packed in the .blend'],
       ['Rigacar 7.1', 'patched for Blender 4.4–5.2 — bone collections, slotted actions, Blender 5 bake (GPL-3)'],
-      ['README', 'rig controls, hierarchy and render notes, EN and RU'],
-    ],
-    specs: [
-      ['Scale', 'Metres, 4.67 × 1.93 × 1.35 m, wheels on Z = 0, nose to −Y'],
-      ['Rig', 'Steering, drift, suspension height and roll, per-wheel dampers and brakes'],
-      ['Wheels', 'Spin from the root control; bake rotation and steering for curved paths'],
-      ['Shading', 'Cycles dust and edge masks run on AO nodes, mirroring the Octane setup'],
     ],
     // Said plainly rather than discovered after the download.
     caveats: [

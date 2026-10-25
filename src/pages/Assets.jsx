@@ -137,15 +137,19 @@ export default function Assets() {
                     ))}
                   </dl>
 
-                  <h3 className="label">Specs</h3>
-                  <dl className="asset__list">
-                    {a.specs.map(([term, desc]) => (
-                      <div className="asset__row" key={term}>
-                        <dt>{term}</dt>
-                        <dd>{desc}</dd>
-                      </div>
-                    ))}
-                  </dl>
+                  {a.specs?.length > 0 && (
+                    <>
+                      <h3 className="label">Specs</h3>
+                      <dl className="asset__list">
+                        {a.specs.map(([term, desc]) => (
+                          <div className="asset__row" key={term}>
+                            <dt>{term}</dt>
+                            <dd>{desc}</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    </>
+                  )}
 
                   {a.caveats?.length > 0 && (
                     <ul className="asset__caveats">
