@@ -6,6 +6,7 @@ import Lightbox from './components/Lightbox'
 import Home from './pages/Home'
 import Project from './pages/Project'
 import Experiments from './pages/Experiments'
+import Assets from './pages/Assets'
 import NotFound from './pages/NotFound'
 import { profile } from './data/profile'
 
@@ -35,6 +36,7 @@ function Shell() {
         <Route path="/" element={<Home onPlayReel={openReel} />} />
         <Route path="/work/:slug" element={<Project />} />
         <Route path="/experiments" element={<Experiments />} />
+        <Route path="/assets" element={<Assets />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
 

@@ -53,6 +53,12 @@ export default function Nav({ onPlayReel }) {
           >
             Experiments
           </NavLink>
+          <NavLink
+            to="/assets"
+            className={({ isActive }) => `nav__link ${isActive ? 'is-active' : ''}`}
+          >
+            Assets
+          </NavLink>
           <button type="button" className="nav__link" onClick={onPlayReel}>
             Reel
           </button>
