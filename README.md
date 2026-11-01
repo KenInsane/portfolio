@@ -83,7 +83,7 @@ panel it sits behind; the panels themselves are listed in `src/data/categories.j
 ```js
 {
   slug: 'my-project',            // the URL: /#/work/my-project
-  category: 'cod-mw4',           // an id from categories.js
+  category: 'call-of-duty',      // an id from categories.js
   title: 'My Project',
   subtitle: 'Short film',
   year: '2026',

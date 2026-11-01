@@ -36,12 +36,12 @@ const PREVIEW = { width: 1280, quality: 90 }
 const JOBS = [
   { name: 'dota-2.jpg', frame: true, ...COVER },
   {
-    name: 'cod-mw4.jpg',
+    name: 'call-of-duty.jpg',
     src: join(RENDERS, 'photo_2026-10-27_18-36-04 (2).jpg'),
     extract: { left: 0, top: 15, width: 1280, height: 587 },
     ...PREVIEW,
   },
-  { name: 'cod-mw4-banner.jpg', src: join(RENDERS, 'photo_2026-10-28_23-18-47.jpg'), ...PREVIEW },
+  { name: 'call-of-duty-banner.jpg', src: join(RENDERS, 'photo_2026-10-28_23-18-47.jpg'), ...PREVIEW },
 ]
 
 /** One frame of the master as a lossless temp file, so sharp does the only encode. */
