@@ -675,6 +675,282 @@ h4 {
   font-size: 0.975rem;
 }
 
+/* ------------------------------------------------------ category panels -- */
+/* Slanted slices of one frame. The whole row is skewed and each child skews
+   back, so only the seams lean — pictures and type stay upright. */
+
+.cats {
+  --slant: 12deg;
+  --tan: 0.2126; /* tan(--slant) */
+  --h: clamp(440px, 50vw, 720px);
+  /* How far a seam travels sideways from top to bottom. */
+  --run: calc(var(--h) * var(--tan));
+  position: relative;
+  height: var(--h);
+  overflow: hidden;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--line);
+  background: var(--bg);
+  container-type: inline-size;
+}
+
+/* Hangs out past both sides of the frame, so the two outer edges of the skewed
+   row are cut off by the frame and the corners stay square. */
+.cats__track {
+  position: absolute;
+  inset: 0 calc(var(--run) / -2);
+  display: flex;
+  gap: 5px;
+  transform: skewX(calc(var(--slant) * -1));
+}
+
+.cat {
+  --grow: 1;
+  position: relative;
+  flex: var(--grow) 1 0;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--surface);
+  transition: flex-grow 0.8s var(--ease);
+}
+
+.cat--lead {
+  --grow: 1.5;
+}
+
+/* Sized to the row, not the panel: as a panel opens more of the picture is
+   revealed, rather than the picture rescaling under the pointer. */
+.cat__media {
+  position: absolute;
+  inset-block: 0;
+  left: 50%;
+  width: var(--media-w);
+  transform: translateX(calc(-50% + var(--media-shift))) skewX(var(--slant));
+  filter: brightness(0.68);
+  transition: filter 0.6s var(--ease);
+}
+
+.cat--lead .cat__media {
+  filter: none;
+}
+
+.cat__media > * {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--media-x, 50%) 50%;
+}
+
+.cat::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(to top, rgba(var(--bg-rgb), 0.9) 4%, transparent 44%);
+  pointer-events: none;
+}
+
+.cat__body {
+  position: absolute;
+  inset: auto 0 0 0;
+  z-index: 2;
+  /* The left inset keeps a block this tall clear of the leaning seam. */
+  padding: 0 1.25rem clamp(1.25rem, 2.4vw, 2rem) 3rem;
+  /* Skewed back from its bottom left corner, so the text sits on the seam's
+     foot instead of drifting off it. */
+  transform: skewX(var(--slant));
+  transform-origin: 0 100%;
+}
+
+/* The first seam's foot is outside the frame. */
+.cat:first-child .cat__body {
+  padding-left: calc(var(--run) + 1.75rem);
+}
+
+.cat__title {
+  font-size: clamp(1.4rem, 2.5vw, 2.6rem);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.cat__sub {
+  color: var(--dim);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin-top: 0.4rem;
+  /* One line each, or a wrapped line lifts that title off the shared baseline. */
+  white-space: nowrap;
+}
+
+/* Quiet until asked for: four arrows at rest would just be four more marks.
+   Out of the flow too, so an invisible arrow never narrows the text. */
+.cat__go {
+  position: absolute;
+  right: 1.25rem;
+  bottom: clamp(1.25rem, 2.4vw, 2rem);
+  opacity: 0;
+  transition:
+    opacity 0.4s var(--ease),
+    background 0.4s var(--ease),
+    transform 0.4s var(--ease);
+}
+
+.cat:focus-visible {
+  outline: 2px solid var(--txt);
+  outline-offset: -5px;
+}
+
+@media (hover: hover) {
+  .cats__track:hover .cat--lead {
+    --grow: 1;
+  }
+
+  .cats__track:hover .cat__media {
+    filter: brightness(0.5);
+  }
+
+  .cat:hover,
+  .cat--lead:hover,
+  .cat:focus-visible {
+    --grow: 1.9;
+  }
+
+  .cats__track .cat:hover .cat__media,
+  .cat:focus-visible .cat__media {
+    filter: none;
+  }
+
+  .cat:hover .cat__go,
+  .cat:focus-visible .cat__go {
+    opacity: 1;
+    background: var(--accent);
+    border-color: transparent;
+    color: var(--bg);
+  }
+}
+
+/* A slice this narrow cannot hold a title, so below this the panels become
+   plain bands: the slant is a desktop gesture, not worth the loss of legibility. */
+@media (max-width: 900px) {
+  .cats {
+    height: auto;
+    container-type: normal;
+  }
+
+  .cats__track {
+    position: static;
+    flex-direction: column;
+    gap: 4px;
+    transform: none;
+  }
+
+  .cat {
+    flex: none;
+    height: clamp(160px, 44vw, 280px);
+  }
+
+  .cat--lead {
+    height: clamp(230px, 62vw, 400px);
+  }
+
+  .cat__media {
+    left: 0;
+    width: 100%;
+    transform: none;
+    filter: none;
+  }
+
+  .cat__body,
+  .cat:first-child .cat__body {
+    padding: 0 1.15rem 1rem;
+    transform: none;
+  }
+
+  .cat__go {
+    opacity: 1;
+  }
+}
+
+/* -------------------------------------------------------- category page -- */
+
+.cat-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  /* Pulled left by a link's padding, so the labels line up with the heading. */
+  margin: clamp(1.5rem, 3vw, 2.25rem) 0 clamp(2.5rem, 5vw, 4rem) -0.95rem;
+}
+
+.cat-page {
+  padding-bottom: clamp(4.5rem, 11vw, 9rem);
+}
+
+.cat-soon {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  min-height: clamp(280px, 28vw, 420px);
+  overflow: hidden;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.cat-soon__media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* The sniper sits left of centre; narrow screens crop in on them. */
+  object-position: 36% 50%;
+}
+
+.cat-soon::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(var(--bg-rgb), 0.92) 8%, transparent 70%);
+  pointer-events: none;
+}
+
+.cat-soon__body {
+  position: relative;
+  z-index: 1;
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+}
+
+.cat-soon__title {
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 600;
+}
+
+.cat-soon__line {
+  max-width: 52ch;
+  margin-top: 0.5rem;
+  color: var(--dim);
+  font-size: 0.95rem;
+}
+
+/* The frame is too short here to keep three lines of text off the sniper's
+   face, so the text moves out from under the picture altogether. */
+@media (max-width: 700px) {
+  .cat-soon {
+    display: block;
+    min-height: 0;
+  }
+
+  .cat-soon__media {
+    position: static;
+    display: block;
+    height: 56vw;
+  }
+
+  .cat-soon::after {
+    display: none;
+  }
+}
+
 /* --------------------------------------------------------- sticky stack -- */
 /* Each project pins under the nav and the next one slides over it. The cards
    shrink slightly as they get buried, which is what sells the depth. */

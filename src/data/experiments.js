@@ -53,7 +53,7 @@ const list = [
   ['portal-test', 'Portal FX test', anim],
   ['ship', 'Ship FX', mp4],
   ['explosion-preview', 'Explosion', anim],
-  ['explo-preview', 'Explosion preview', mp4],
+  ['explo-preview', 'Explosion preview', mp4Poster],
   ['sh4fx-v2', 'SH4 FX v2', anim],
   ['beach-water', 'Beach water R&D', mp4],
   ['beach-water-v2', 'Beach water R&D v2', mp4],

@@ -65,14 +65,19 @@ function Video({ src, poster, hoverPlay, label, className, loopStart = 0 }) {
   useEffect(() => {
     const el = ref.current
     if (!el || !hoverPlay) return
-    const card = el.closest('.card, .still, .bd__media') || el.parentElement
+    const card = el.closest('.card, .cat, .still, .bd__media') || el.parentElement
     if (!card) return
 
     const play = () => {
       el.currentTime = 0
       el.play().catch(() => {}) // autoplay can be refused; the poster still shows
     }
-    const stop = () => el.pause()
+    // load() drops back to the poster; pause() alone would leave the card on
+    // whatever frame the pointer happened to leave it at.
+    const stop = () => {
+      el.pause()
+      el.load()
+    }
 
     card.addEventListener('pointerenter', play)
     card.addEventListener('pointerleave', stop)

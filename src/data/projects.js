@@ -1,6 +1,6 @@
 /**
- * The work. Order here is the order on the page — the first entry gets the
- * wide featured slot.
+ * The work. Order here is the order on each category page, and `category` is an
+ * id from categories.js — that is what puts a project behind a home-page panel.
  *
  * Every `src` is ignored while `USE_PLACEHOLDERS` is true in config.js, but
  * the paths are already wired to what `tools/build_media.py` produces, so
@@ -25,6 +25,7 @@ export const projects = [
   {
     // Title is SOLOS with an S on purpose — only the "JORNEY" spelling was a typo.
     slug: 'solos-journey-4',
+    category: 'rust',
     title: 'Solos Journey 4',
     subtitle: 'Opening intro',
     year: '2026',
@@ -90,6 +91,7 @@ export const projects = [
 
   {
     slug: 'divine-rampage',
+    category: 'dota-2',
     title: 'Divine Rampage',
     subtitle: 'Dota 2 short film',
     year: '2025',
@@ -209,6 +211,7 @@ export const projects = [
 
   {
     slug: 'sphere-master',
+    category: 'dota-2',
     title: 'The Sphere Master',
     subtitle: 'Dota 2 short film',
     year: '2024',
@@ -301,6 +304,7 @@ export const projects = [
 
   {
     slug: 'vaio-fe',
+    category: 'vfx-motion',
     title: 'The New VAIO FE',
     subtitle: 'Product film',
     year: '2023',
@@ -378,6 +382,7 @@ export const projects = [
 
   {
     slug: 'short-film-2026',
+    category: 'vfx-motion',
     title: 'Untitled Short Film',
     subtitle: 'Short film',
     year: '2026',
@@ -426,6 +431,7 @@ export const projects = [
 
   {
     slug: 'shanghai',
+    category: 'vfx-motion',
     title: 'Shanghai',
     subtitle: 'Real-time environment',
     year: '2026',
@@ -508,6 +514,7 @@ export const projects = [
 
   {
     slug: 'ink-sumi',
+    category: 'vfx-motion',
     title: 'Ink & Water',
     subtitle: 'FX research',
     year: '2026',
@@ -556,6 +563,7 @@ export const projects = [
 
   {
     slug: 'statue-collapse',
+    category: 'vfx-motion',
     title: 'Statue Collapse',
     subtitle: 'Destruction and comp',
     year: '2025',

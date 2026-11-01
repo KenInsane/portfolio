@@ -7,6 +7,7 @@ import Reveal from '../components/Reveal'
 import Lightbox from '../components/Lightbox'
 import NotFound from './NotFound'
 import { getNextProject, getProject } from '../data/projects'
+import { getCategory } from '../data/categories'
 import { SITE_TITLE } from '../data/profile'
 
 const BackArrow = () => (
@@ -67,6 +68,7 @@ export default function Project() {
     real,
   } = project
   const next = getNextProject(slug)
+  const category = getCategory(project.category)
 
   // Derived from the file rather than declared per entry — the two drifted apart
   // once the animated plates moved from WebP to MP4, and the markup kept
@@ -133,9 +135,9 @@ export default function Project() {
   return (
     <main className="proj" style={styleVars}>
       <div className="shell">
-        <Link to="/" className="back">
+        <Link to={`/work/${category.id}`} className="back">
           <BackArrow />
-          <span>All work</span>
+          <span>{category.title}</span>
         </Link>
 
         <Reveal>

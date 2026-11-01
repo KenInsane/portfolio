@@ -77,12 +77,13 @@ it only reads.
 
 ## Adding a project
 
-Append an entry to `src/data/projects.js`. The first entry in the array gets the
-wide featured slot on the grid; the rest go two-up.
+Append an entry to `src/data/projects.js`. Its `category` decides which home-page
+panel it sits behind; the panels themselves are listed in `src/data/categories.js`.
 
 ```js
 {
   slug: 'my-project',            // the URL: /#/work/my-project
+  category: 'cod-mw4',           // an id from categories.js
   title: 'My Project',
   subtitle: 'Short film',
   year: '2026',

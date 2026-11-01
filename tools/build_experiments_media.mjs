@@ -107,7 +107,8 @@ const VIDEOS = [
   ['portal_v001.mp4', 'portal-v001'],
   ['portal_v002.mp4', 'portal-v002'],
   ['roshan_ice_v2.mp4', 'roshan-ice-v2'],
-  ['explo_preview.mp4', 'explo-preview'],
+  // Also the Experiments card on the VFX & Motion page, which needs a still.
+  ['explo_preview.mp4', 'explo-preview', undefined, { poster: true }],
   ['beach_water_rnd.mp4', 'beach-water'],
   ['beach_water_rnd_v2.mp4', 'beach-water-v2'],
   [

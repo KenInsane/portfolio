@@ -1,52 +1,45 @@
 import { Link } from 'react-router-dom'
 import Media from './Media'
 import Reveal from './Reveal'
-import { publishedProjects } from '../data/projects'
+import { ArrowIcon } from './ProjectStack'
+import { categories } from '../data/categories'
 
-const ArrowIcon = () => (
-  <svg viewBox="0 0 16 16" aria-hidden="true">
-    <path d="M4 12L12 4M12 4H5.5M12 4v6.5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-)
-
-function Card({ project, index }) {
-  const { slug, title, subtitle, year, status, media } = project
+function Panel({ category }) {
+  const { id, title, subtitle, cover, loop, framing, lead } = category
 
   return (
-    /* --i drives the sticky offset so buried cards leave a visible sliver. */
-    <div className="stack__item" style={{ '--i': index }}>
-      <Link to={`/work/${slug}`} className="card">
-        <div className="card__frame">
-          <Media
-            kind={media.loop ? 'video' : 'image'}
-            src={media.loop || media.thumb}
-            poster={media.thumb}
-            real={project.real}
-            seed={slug}
-            label={title}
-            alt={`${title} — ${subtitle}`}
-            hoverPlay
-            motion
-          />
+    <Link
+      to={`/work/${id}`}
+      className={`cat ${lead ? 'cat--lead' : ''}`}
+      style={{
+        '--media-w': `${framing.width}cqw`,
+        '--media-shift': `${framing.shift}%`,
+        '--media-x': framing.x,
+      }}
+    >
+      <div className="cat__media">
+        <Media
+          kind={loop ? 'video' : 'image'}
+          src={loop || cover}
+          poster={cover}
+          real
+          seed={id}
+          label={title}
+          alt=""
+          hoverPlay
+        />
+      </div>
+
+      <div className="cat__body">
+        <div>
+          <h3 className="cat__title">{title}</h3>
+          <p className="cat__sub">{subtitle}</p>
         </div>
-
-        {status && <span className="tag card__badge">{status}</span>}
-
-        <div className="card__overlay">
-          <div>
-            <h3 className="card__title">{title}</h3>
-            <p className="card__sub">{subtitle}</p>
-          </div>
-
-          <div className="card__side">
-            <span className="card__year">{year}</span>
-            <span className="card__go">
-              <ArrowIcon />
-            </span>
-          </div>
-        </div>
-      </Link>
-    </div>
+        <span className="card__go cat__go">
+          <ArrowIcon />
+        </span>
+      </div>
+    </Link>
   )
 }
 
@@ -60,16 +53,20 @@ export default function WorkGrid() {
             <h2 className="section__title">Work</h2>
           </div>
           <p className="section__note">
-            Short films, real-time environments and effects research. Each project opens
-            into a breakdown of how the shots were built.
+            Mostly game worlds, sorted by game: cinematics, real-time scenes and effects,
+            with a look at how the shots were built.
           </p>
         </Reveal>
 
-        <div className="stack">
-          {publishedProjects.map((project, i) => (
-            <Card key={project.slug} project={project} index={i} />
-          ))}
-        </div>
+        <Reveal>
+          <nav className="cats" aria-label="Work by category">
+            <div className="cats__track">
+              {categories.map((category) => (
+                <Panel key={category.id} category={category} />
+              ))}
+            </div>
+          </nav>
+        </Reveal>
       </div>
     </section>
   )
