@@ -8,7 +8,9 @@ export const ArrowIcon = () => (
 )
 
 function Card({ item, index }) {
-  const { slug, to = `/work/${slug}`, title, subtitle, year, status, media } = item
+  const { slug, to = `/work/${slug}`, title, subtitle, year, status, award, media } = item
+  // One badge slot: an in-progress status outranks an award.
+  const badge = status || award?.label
 
   return (
     /* --i drives the sticky offset so buried cards leave a visible sliver. */
@@ -28,7 +30,7 @@ function Card({ item, index }) {
           />
         </div>
 
-        {status && <span className="tag card__badge">{status}</span>}
+        {badge && <span className="tag card__badge">{badge}</span>}
 
         <div className="card__overlay">
           <div>

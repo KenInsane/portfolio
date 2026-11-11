@@ -47,6 +47,7 @@ export default function Project() {
     year,
     client,
     status,
+    award,
     roles,
     tools,
     links,
@@ -183,6 +184,13 @@ export default function Project() {
             <MetaRow label="Client">
               <p className="meta__val">{client}</p>
             </MetaRow>
+            {award && (
+              <MetaRow label="Award">
+                <p className="meta__val">
+                  {award.label}, {award.event}
+                </p>
+              </MetaRow>
+            )}
             {/* With no accent colour left to mark it, status earns its emphasis
                 from the pill instead. */}
             {status && (

@@ -97,6 +97,9 @@ export const projects = [
     year: '2025',
     client: 'Personal project',
     status: null,
+    // Placing as stated by the user (2026-11-12). `label` is the short form for
+    // the card badge, `event` completes it on the project page.
+    award: { label: 'Top 10', event: 'Dota 2 Short Film Contest 2025' },
     summary: 'A Dota 2 short film made solo — idea, 3D, effects and comp.',
     // Straight from the Behance credit block: "Idea | ケンInsane / 3D Artist,
     // Compositor, VFX | ケンInsane". No collaborators listed, so no credits row.
@@ -125,7 +128,7 @@ export const projects = [
     description: [
       'A Dota 2 short film made on my own — the idea, the 3D work, the effects and the ' +
         'comp. Built across Unreal Engine 5, Houdini and Cinema 4D, finished in Nuke and ' +
-        'After Effects.',
+        'After Effects. It made the top 10 of the Dota 2 Short Film Contest 2025.',
       'Most of what follows is the film taken apart: the water simulation running through ' +
         'the river, the tower coming down, the spell effects, and the sculpt and lookdev ' +
         'work sitting underneath all of it.',
@@ -217,6 +220,7 @@ export const projects = [
     year: '2024',
     client: 'Dota 2 Short Film Contest 2024',
     status: null, // null = finished; a string renders as a badge on the card
+    award: { label: '3rd place', event: 'Dota 2 Short Film Contest 2024' },
     summary:
       "Invoker defending the base — a contest short built in Unreal Engine 5 and Houdini.",
     // Only the credit that is actually mine. The film was directed by someone
@@ -238,7 +242,7 @@ export const projects = [
         "with his full range of spells. The project involved intense art direction, VFX, and " +
         "technical work, capturing the power and complexity of Invoker's magic in a visually " +
         'striking cinematic experience.',
-      'Made for the Dota 2 Short Film Contest 2024. My contribution was the effects work — ' +
+      'Made for the Dota 2 Short Film Contest 2024, where it took 3rd place. My contribution was the effects work — ' +
         "the cloth on Invoker's costume, the magic gathering in his hands, the charge that " +
         'holds before release, the meteor and the Sun Strike. Those five setups are broken ' +
         'down below.',
