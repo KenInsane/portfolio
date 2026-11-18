@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import Media from '../components/Media'
 import Reveal from '../components/Reveal'
 import { ArrowIcon } from '../components/ProjectStack'
 import { stores } from '../data/stores'
@@ -51,7 +50,9 @@ export default function Assets() {
             <Reveal key={s.id} delay={i * 80}>
               <a className="store" href={s.href} target="_blank" rel="noreferrer noopener">
                 <div className="store__frame">
-                  <Media src={s.cover} real seed={s.id} label={s.title} alt="" />
+                  <svg className="store__icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d={s.icon} />
+                  </svg>
                 </div>
 
                 <div className="store__body">

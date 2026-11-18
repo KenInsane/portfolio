@@ -1236,20 +1236,28 @@ h4 {
   outline-offset: 4px;
 }
 
+/* The platform's own mark rather than a product: the card is about where the
+   click goes. A soft bloom behind it keeps a single glyph from reading as an
+   empty box. */
 .store__frame {
+  display: grid;
+  place-items: center;
   aspect-ratio: 16 / 9;
   overflow: hidden;
+  background: radial-gradient(45% 60% at 50% 50%, rgba(255, 255, 255, 0.07), transparent 70%),
+    var(--bg-2);
+  border-bottom: 1px solid var(--line);
 }
 
-.store__frame > * {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 1.3s var(--ease);
+.store__icon {
+  width: clamp(3.5rem, 18%, 6.5rem);
+  height: auto;
+  fill: var(--txt);
+  transition: transform 0.8s var(--ease);
 }
 
-.store:hover .store__frame > * {
-  transform: scale(1.04);
+.store:hover .store__icon {
+  transform: scale(1.08);
 }
 
 .store__body {
