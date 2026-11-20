@@ -307,6 +307,70 @@ export const projects = [
   },
 
   {
+    slug: 'lamborghini-temerario',
+    category: 'vfx-motion',
+    title: 'Lamborghini Temerario',
+    subtitle: 'Automotive CGI',
+    year: '2026',
+    client: 'Personal project',
+    status: null,
+    summary: 'A short automotive film: the Temerario picked out of the dark by its own lights.',
+    // The car model is not the user's; the materials, the rear lettering, the
+    // light, the render and the comp are. Keep the copy to those.
+    roles: ['Lookdev', 'Lighting', 'Rendering', 'Compositing'],
+    tools: ['Cinema 4D', 'Octane', 'Nuke', 'After Effects'],
+    aspect: 1.778,
+    real: true,
+    description: [
+      'A short automotive film of the Lamborghini Temerario. The car is never shown whole: ' +
+        'it comes out of the dark by its own tail lights, by a single edge of light, and ' +
+        'through a pane of ribbed glass.',
+      'The materials were built for Octane from scratch, and the rear Lamborghini lettering ' +
+        'was remodelled as clean geometry so it holds up in close-up.',
+      'Rendered in Octane with light-ID, Cryptomatte and depth passes, then graded and ' +
+        'finished shot by shot in Nuke.',
+    ],
+    links: [
+      {
+        label: 'Watch on YouTube',
+        href: 'https://www.youtube.com/watch?v=AeVeoVG7OEE',
+      },
+    ],
+    video: { provider: 'youtube', id: 'AeVeoVG7OEE' },
+    // Built by tools/build_lambo_media.mjs from the comped shots in Z:\RNDR.
+    media: {
+      poster: 'media/work/lamborghini-temerario/poster.jpg',
+      thumb: 'media/work/lamborghini-temerario/thumb.jpg',
+      loop: 'media/work/lamborghini-temerario/shots/01.mp4',
+    },
+    platesTag: 'From the film',
+    platesTitle: 'Shots',
+    plates: ['01', '02', '03'].map((n) => ({
+      src: `media/work/lamborghini-temerario/shots/${n}.mp4`,
+      caption: `Shot ${n}`,
+    })),
+    bdAspect: 1.84,
+    breakdown: {
+      intro: 'How the shots were built.',
+      steps: [
+        {
+          title: 'Scene and light',
+          body:
+            'The car, the ribbed glass and the area lights laid out in Cinema 4D, ' +
+            'with Octane materials on every part.',
+          media: { type: 'image', src: 'media/work/lamborghini-temerario/bd/c4d.jpg' },
+        },
+        {
+          title: 'Comp',
+          body:
+            'All three shots in one Nuke script, each graded light by light from the ' +
+            'light-ID passes, with Cryptomatte for the mattes.',
+          media: { type: 'image', src: 'media/work/lamborghini-temerario/bd/nuke.jpg' },
+        },
+      ],
+    },
+  },
+  {
     slug: 'vaio-fe',
     category: 'vfx-motion',
     title: 'The New VAIO FE',
