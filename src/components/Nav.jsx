@@ -62,9 +62,15 @@ export default function Nav({ onPlayReel }) {
           <button type="button" className="nav__link" onClick={onPlayReel}>
             Reel
           </button>
-          <a href="/" className="nav__link" onClick={goToSection('contact')}>
-            Contact
-          </a>
+          {/* Replaces the old "Contact" jump to the footer: the hire page holds
+              the same contact buttons plus what a client needs before writing,
+              and a sixth link would push the phone nav further off-screen. */}
+          <NavLink
+            to="/hire"
+            className={({ isActive }) => `nav__link ${isActive ? 'is-active' : ''}`}
+          >
+            Hire
+          </NavLink>
         </nav>
       </div>
     </header>

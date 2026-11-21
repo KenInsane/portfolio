@@ -15,6 +15,8 @@ export const profile = {
   location: 'Available worldwide — remote',
 
   // No email on the site by choice — the socials below are the way in.
+  // Set an address here and the /hire page adds an "Email me" button first.
+  email: '',
 
   // Two or three sentences. Keep it about the work, not the résumé.
   intro:

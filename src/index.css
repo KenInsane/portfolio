@@ -1098,7 +1098,8 @@ h4 {
    the viewport edge without turning the page into a scroll container (which
    would break the sticky meta rail) and without clipping the fixed lightbox. */
 .exp-page,
-.assets-page {
+.assets-page,
+.hire-page {
   overflow-x: clip;
 }
 
@@ -1296,6 +1297,276 @@ h4 {
   color: var(--bg);
   transform: translate(3px, -3px);
   box-shadow: 0 8px 30px -6px var(--glow);
+}
+
+/* ----------------------------------------------------------------- hire -- */
+/* "Work with me". Editorial like the rest of the site: heading in a narrow
+   left column, content on the right, hairlines instead of boxes, no numerals.
+   The brief at the bottom is the one panel, because it is the one place the
+   page asks the visitor to do something. */
+
+.hire-page .shell {
+  position: relative;
+}
+
+.hire__actions {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: clamp(1.75rem, 3.5vw, 2.5rem);
+}
+
+.hire__sec {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1rem, 2.5vw, 1.75rem);
+  margin-top: clamp(3.5rem, 8vw, 6rem);
+}
+
+@media (min-width: 960px) {
+  .hire__sec {
+    grid-template-columns: minmax(0, 16rem) minmax(0, 1fr);
+    gap: clamp(2rem, 4vw, 4rem);
+  }
+
+  /* Drops the heading onto the first row's text, under the same hairline. */
+  .hire__h2 {
+    padding-top: 1.15rem;
+  }
+}
+
+.hire__h2 {
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+}
+
+.hire__item {
+  border-top: 1px solid var(--line);
+  padding-top: 1.15rem;
+}
+
+.hire__item-title {
+  font-size: clamp(1.2rem, 1.8vw, 1.5rem);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+}
+
+.hire__item-text {
+  max-width: 58ch;
+  margin-top: 0.5rem;
+  color: var(--dim);
+  font-size: 0.98rem;
+  line-height: 1.6;
+}
+
+/* Services: ruled rows, the title beside its text once there is room. */
+.hire__items--rows .hire__item {
+  padding-bottom: 1.15rem;
+}
+
+.hire__items--rows .hire__item:last-child {
+  border-bottom: 1px solid var(--line);
+}
+
+@media (min-width: 720px) {
+  .hire__items--rows .hire__item {
+    display: grid;
+    grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
+    gap: 2rem;
+  }
+
+  .hire__items--rows .hire__item-text {
+    margin-top: 0.15rem;
+  }
+}
+
+/* Formats two-up, steps four-up; both fold to one column on a phone. */
+.hire__items--grid,
+.hire__items--steps {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1.5rem, 3vw, 2.25rem) clamp(1.5rem, 3vw, 2.5rem);
+}
+
+@media (min-width: 640px) {
+  .hire__items--grid,
+  .hire__items--steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1200px) {
+  .hire__items--steps {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* The steps read left to right, so their rule is the brighter one. */
+.hire__items--steps .hire__item {
+  border-top-color: var(--line-hi);
+}
+
+.hire__software {
+  margin-top: 1.75rem;
+  max-width: 70ch;
+  color: var(--dim);
+  font-size: 0.95rem;
+}
+
+.hire__software .label {
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+/* Underlined, because a link with no colour of its own needs one. */
+.more-link {
+  display: inline-block;
+  margin-top: 0.6rem;
+  font-size: 0.9rem;
+  color: var(--txt);
+  text-decoration: underline;
+  text-decoration-color: var(--line-hi);
+  text-underline-offset: 0.3em;
+  transition: text-decoration-color 0.3s var(--ease);
+}
+
+.more-link:hover {
+  text-decoration-color: currentColor;
+}
+
+/* Credits: the footer's ruled list, one size down, with the proof beside it. */
+.hire__credits {
+  border-top: 1px solid var(--line);
+}
+
+.hire__credits li {
+  border-bottom: 1px solid var(--line);
+}
+
+.hire__credit {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.35rem 1.5rem;
+  padding-block: clamp(0.9rem, 2vw, 1.25rem);
+  transition: padding-inline-start 0.45s var(--ease);
+}
+
+.hire__credit::after {
+  content: '→';
+  grid-column: 2;
+  grid-row: 1;
+  color: var(--mute);
+  transition:
+    transform 0.45s var(--ease),
+    color 0.35s var(--ease);
+}
+
+.hire__credit:hover {
+  padding-inline-start: clamp(0.5rem, 1.5vw, 1rem);
+}
+
+.hire__credit:hover::after {
+  color: var(--txt);
+  transform: translateX(4px);
+}
+
+.hire__credit-title {
+  grid-column: 1;
+  grid-row: 1;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.35rem, 3vw, 2.1rem);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.hire__credit-meta {
+  grid-column: 1;
+  display: grid;
+  gap: 0.1rem;
+  color: var(--dim);
+  font-size: 0.92rem;
+}
+
+.hire__credit-meta span {
+  color: var(--mute);
+}
+
+.hire__rate {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  padding-top: 1.15rem;
+  border-top: 1px solid var(--line);
+}
+
+.hire__rate-note {
+  margin-top: 0;
+  padding-top: 1.15rem;
+  border-top: 1px solid var(--line);
+}
+
+.hire__rate + .hire__rate-note {
+  border-top: 0;
+  padding-top: 0.75rem;
+}
+
+.hire__brief {
+  position: relative;
+  margin-top: clamp(4rem, 9vw, 7rem);
+  padding: clamp(1.5rem, 4.5vw, 4rem);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: 0 30px 80px -40px rgba(0, 0, 0, 0.9);
+  overflow: hidden;
+}
+
+.hire__brief-title {
+  margin-top: 1.25rem;
+  font-size: clamp(2.2rem, 6vw, 4.5rem);
+  font-weight: 700;
+}
+
+.hire__brief-lead {
+  margin-top: 1.25rem;
+  color: var(--dim);
+  font-size: clamp(1rem, 1.5vw, 1.15rem);
+}
+
+.hire__checklist {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  column-gap: clamp(1.5rem, 3vw, 2.5rem);
+  margin-top: 1.5rem;
+  max-width: 56rem;
+}
+
+@media (min-width: 720px) {
+  .hire__checklist {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.hire__checklist li {
+  padding-block: 0.7rem;
+  border-top: 1px solid var(--line);
+  color: var(--txt);
+}
+
+.footer__hire {
+  position: relative;
+  margin-top: 1rem;
+}
+
+.hire__email {
+  margin-top: 1rem;
+  color: var(--dim);
+  font-size: 0.95rem;
 }
 
 /* ------------------------------------------------------------- sections -- */

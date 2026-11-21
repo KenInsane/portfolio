@@ -8,6 +8,7 @@ import Project from './pages/Project'
 import Category from './pages/Category'
 import Experiments from './pages/Experiments'
 import Assets from './pages/Assets'
+import Hire from './pages/Hire'
 import NotFound from './pages/NotFound'
 import { categories } from './data/categories'
 import { profile } from './data/profile'
@@ -44,6 +45,7 @@ function Shell() {
         <Route path="/work/:slug" element={<Project />} />
         <Route path="/experiments" element={<Experiments />} />
         <Route path="/assets" element={<Assets />} />
+        <Route path="/hire" element={<Hire onPlayReel={openReel} />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
 

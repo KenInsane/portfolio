@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import Reveal from './Reveal'
 import { profile } from '../data/profile'
 
@@ -16,6 +17,9 @@ export default function Footer() {
             Open to freelance and studio work — Effects, Scene creation, Look Development,
             Rendering and Compositing.
           </p>
+          <Link to="/hire" className="more-link footer__hire">
+            How to work with me
+          </Link>
 
           {/* These carry the footer now that there is no email address, so they
               are set as a list of statements rather than small chips. */}
